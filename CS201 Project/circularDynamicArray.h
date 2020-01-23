@@ -14,5 +14,6 @@ public:
 	void addEnd(int x);
 	void addFront(int x);
 	void printArray();
+	void printFrontBack();
 };
 

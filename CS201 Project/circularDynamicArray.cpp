@@ -25,6 +25,7 @@ void CircularDynamicArray::addEnd(int x) {
 	back_ptr[size] = x;
 	cout << "I just added " << x << endl;
 	size += 1;
+	//back_ptr->next
 }
 
 void CircularDynamicArray::addFront(int x) {
@@ -42,9 +43,18 @@ void CircularDynamicArray::addFront(int x) {
 
 void CircularDynamicArray::printArray() {
 	temp_ptr = front_ptr;
+	cout << "[";
 	for (int i = 0; i < size; i++) {
-		cout << &temp_ptr[i] << endl;
+		cout << temp_ptr[i];
+		if (i < size - 1)
+			cout << ", ";
 	}
+	cout <<  "]" << endl;
+}
+
+void CircularDynamicArray::printFrontBack() {
+	cout << "HEAD: " << *front_ptr << endl;
+	cout << "BACK: " << *back_ptr << endl;
 }
 
 void CircularDynamicArray::grow() {

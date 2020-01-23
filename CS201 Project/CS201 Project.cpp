@@ -14,6 +14,7 @@ int main()
     arr.addEnd(3);
     arr.addEnd(4);
     arr.printArray();
+    arr.printFrontBack();
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
