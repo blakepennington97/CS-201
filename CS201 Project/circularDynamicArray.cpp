@@ -5,7 +5,8 @@ using namespace std;
 CircularDynamicArray::CircularDynamicArray() {
 	size = 0;
 	capacity = 2;
-	front_ptr = new int[capacity];
+	array = new int[capacity] {}; //intialize a dynamic array of capacity 2
+	front_ptr = array;
 	back_ptr = front_ptr;
 }
 
@@ -22,10 +23,11 @@ CircularDynamicArray::~CircularDynamicArray() {
 void CircularDynamicArray::addEnd(int x) {
 	if (size == capacity)
 		grow();
-	back_ptr[size] = x;
+	*back_ptr = x;
 	cout << "I just added " << x << endl;
 	size += 1;
-	//back_ptr->next
+	//if back_ptr 
+	back_ptr++;
 }
 
 void CircularDynamicArray::addFront(int x) {
@@ -59,6 +61,13 @@ void CircularDynamicArray::printFrontBack() {
 
 void CircularDynamicArray::grow() {
 	capacity *= 2;
+	int *temp_array = new int[capacity] {}; //intialize a grown dynamic array of capacity c
+	for (int i = 0; i < size; i++) {
+		temp_array[i] = array[i];
+		cout << "im growinggg" << endl;
+	}
+	array = temp_array;
+	delete[] temp_array;
 	/*
 	allocate a new store with the new capacity
 	copy the elements from the old store to the new store

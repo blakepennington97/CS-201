@@ -3,6 +3,7 @@ class CircularDynamicArray {
 private:
 	int size;
 	int capacity;
+	int* array;
 	int* front_ptr = nullptr;
 	int* back_ptr = nullptr;
 	int* temp_ptr = nullptr;
