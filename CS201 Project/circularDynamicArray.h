@@ -3,10 +3,13 @@ class CircularDynamicArray {
 private:
 	int size;
 	int capacity;
+	int startIndex;
+	int endIndex;
 	int* array;
-	int* front_ptr = nullptr;
-	int* back_ptr = nullptr;
-	int* temp_ptr = nullptr;
+	int* temp_array;
+	int* front_ptr;
+	int* back_ptr;
+	int* temp_ptr;
 	void grow();
 public:
 	CircularDynamicArray();

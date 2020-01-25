@@ -12,12 +12,9 @@ int main()
     arr.addEnd(1);
     arr.addEnd(2);
     arr.addEnd(3);
-    arr.addEnd(4);
-    arr.addEnd(5);
-    arr.addEnd(6);
-    arr.addEnd(7);
-    arr.addEnd(8);
-    //arr.addEnd(9);
+    //arr.addEnd(4);
+    /*arr.addFront(1);
+    arr.addFront(2);*/
     arr.printArray();
     arr.printFrontBack();
 }

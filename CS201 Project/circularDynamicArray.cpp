@@ -4,7 +4,11 @@ using namespace std;
 
 CircularDynamicArray::CircularDynamicArray() {
 	size = 0;
-	capacity = 2;
+	capacity = 1;
+	startIndex = -1;
+	endIndex = 0;
+	temp_array = NULL;
+	temp_ptr = NULL;
 	array = new int[capacity] {}; //intialize a dynamic array of capacity 2
 	front_ptr = array;
 	back_ptr = front_ptr;
@@ -23,7 +27,14 @@ CircularDynamicArray::~CircularDynamicArray() {
 void CircularDynamicArray::addEnd(int x) {
 	if (size == capacity)
 		grow();
-	*back_ptr = x;
+	array[endIndex] = x;
+	
+	for (int i = 0; i < capacity; i++) {
+		cout << array[i] << endl;
+	}
+	cout << "endIndex = " << endIndex << endl;
+	endIndex++;
+	//*back_ptr = x;
 	cout << "I just added " << x << endl;
 	size += 1;
 	//if back_ptr 
@@ -37,18 +48,28 @@ void CircularDynamicArray::addFront(int x) {
 		addEnd(x);
 	else
 	{
-		//startIndex = decrementIndex(startIndex);
-		//store[startIndex] = value;
-		//size += 1;
+		if (startIndex == -1) { //if startIndex is too small
+			startIndex += capacity;
+			cout << "startIndex too small." << endl;
+		}
+		if (startIndex > capacity) { //if startIndex is too large
+			startIndex -= capacity;
+			cout << "startIndex too thicc." << endl;
+		}
+		else {
+			startIndex--;
+		}
+		cout << "Start index = " << startIndex << endl;
+		array[startIndex] = x;
+		size += 1;
 	}
 }
 
 void CircularDynamicArray::printArray() {
-	temp_ptr = front_ptr;
 	cout << "[";
-	for (int i = 0; i < size; i++) {
-		cout << temp_ptr[i];
-		if (i < size - 1)
+	for (int i = 0; i < capacity; i++) {
+		cout << array[i];
+		if (i < capacity - 1)
 			cout << ", ";
 	}
 	cout <<  "]" << endl;
@@ -60,16 +81,20 @@ void CircularDynamicArray::printFrontBack() {
 }
 
 void CircularDynamicArray::grow() {
-	int *temp_array = new int[capacity * 2] {}; //intialize a grown dynamic array of capacity c
-	for (int i = 0; i < capacity; i++) {
+	capacity *= 2;
+	temp_array = new int[capacity] {}; //intialize a larger dynamic array of capacity c
+	for (int i = 0; i < (capacity / 2); i++) {
 		temp_array[i] = array[i];
-		cout << "im growinggg" << endl;
+		//cout << "im growinggg" << endl;
 	}
 	array = temp_array;
-	delete[] temp_array;
-	capacity *= 2;
+	startIndex = 0;
+	//endIndex = capacity;
+	cout << "new capacity = " << capacity << endl;
+
 	//TODO
 	/*
+	delete old array (caused bug in past)
 	allocate a new store with the new capacity
 	copy the elements from the old store to the new store
 	free the old store
