@@ -60,14 +60,15 @@ void CircularDynamicArray::printFrontBack() {
 }
 
 void CircularDynamicArray::grow() {
-	capacity *= 2;
-	int *temp_array = new int[capacity] {}; //intialize a grown dynamic array of capacity c
-	for (int i = 0; i < size; i++) {
+	int *temp_array = new int[capacity * 2] {}; //intialize a grown dynamic array of capacity c
+	for (int i = 0; i < capacity; i++) {
 		temp_array[i] = array[i];
 		cout << "im growinggg" << endl;
 	}
 	array = temp_array;
 	delete[] temp_array;
+	capacity *= 2;
+	//TODO
 	/*
 	allocate a new store with the new capacity
 	copy the elements from the old store to the new store
