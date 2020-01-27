@@ -1,25 +1,22 @@
 #pragma once
+template <typename T>
 class CircularDynamicArray {
-private:
-	struct Node {
-		int data;
-		Node* next;
-	};
-	int size;
-	int capacity;
-	int* array;
-	int* temp_array;
-	int* front_ptr;
-	int* back_ptr;
-	int* temp_ptr;
-	void grow(bool x);
-public:
-	CircularDynamicArray();
-	CircularDynamicArray(int s);
-	~CircularDynamicArray();
-	void addEnd(int x);
-	void addFront(int x);
-	void printArray();
-	void printFrontBack();
+	private:
+		int size;
+		int capacity;
+		T* array;
+		T* temp_array;
+		T* front_ptr;
+		T* back_ptr;
+		T* temp_ptr;
+		void grow(bool x);
+	public:
+		CircularDynamicArray();
+		CircularDynamicArray(int s);
+		~CircularDynamicArray();
+		void addEnd(T x);
+		void addFront(T x);
+		void printArray();
+		void printFrontBack();
 };
 
