@@ -1,10 +1,12 @@
 #pragma once
 class CircularDynamicArray {
 private:
+	struct Node {
+		int data;
+		Node* next;
+	};
 	int size;
 	int capacity;
-	int startIndex;
-	int endIndex;
 	int* array;
 	int* temp_array;
 	int* front_ptr;

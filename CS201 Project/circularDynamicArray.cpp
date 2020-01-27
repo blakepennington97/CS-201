@@ -5,13 +5,11 @@ using namespace std;
 CircularDynamicArray::CircularDynamicArray() {
 	size = 0;
 	capacity = 1;
-	startIndex = -1;
-	endIndex = 0;
 	temp_array = NULL;
 	temp_ptr = NULL;
 	array = new int[capacity] {}; //intialize a dynamic array of capacity 2
-	front_ptr = array;
-	back_ptr = front_ptr;
+	front_ptr = NULL;
+	back_ptr = array;
 }
 
 CircularDynamicArray::CircularDynamicArray(int s) {
@@ -25,42 +23,58 @@ CircularDynamicArray::~CircularDynamicArray() {
 }
 
 void CircularDynamicArray::addEnd(int x) {
-	if (size == capacity)
+	if (size == capacity) {
 		grow();
-	array[endIndex] = x;
-	
-	for (int i = 0; i < capacity; i++) {
-		cout << array[i] << endl;
+		*back_ptr = x;
 	}
-	cout << "endIndex = " << endIndex << endl;
-	endIndex++;
-	//*back_ptr = x;
+	else {
+		*back_ptr = x;
+		back_ptr++;
+	}
+	//cout << "endIndex = " << endIndex << endl;
+	
 	cout << "I just added " << x << endl;
+
+	/*for (int i = 0; i < capacity; i++) {
+		cout << array[i] << endl;
+	}*/
+	if (size == 0) {
+		front_ptr = array;
+	}
 	size += 1;
-	//if back_ptr 
-	back_ptr++;
+	/*if (size != 1) {
+		back_ptr++;
+	}
+	else {
+		front_ptr = array;
+	}*/
+	printArray();
+	printFrontBack();
 }
 
 void CircularDynamicArray::addFront(int x) {
 	if (size == capacity)
 		grow();
-	if (size == 0)
+	if (size == 0) {
 		addEnd(x);
+		front_ptr = array;
+	}
 	else
 	{
-		if (startIndex == -1) { //if startIndex is too small
-			startIndex += capacity;
-			cout << "startIndex too small." << endl;
-		}
-		if (startIndex > capacity) { //if startIndex is too large
-			startIndex -= capacity;
-			cout << "startIndex too thicc." << endl;
-		}
-		else {
-			startIndex--;
-		}
-		cout << "Start index = " << startIndex << endl;
-		array[startIndex] = x;
+		//if (startIndex == -1) { //if startIndex is too small
+		//	startIndex += capacity;
+		//	cout << "startIndex too small." << endl;
+		//}
+		//if (startIndex > capacity) { //if startIndex is too large
+		//	startIndex -= capacity;
+		//	cout << "startIndex too thicc." << endl;
+		//}
+		//else {
+		//	startIndex--;
+		//}
+		//cout << "Start index = " << startIndex << endl;
+		cout << "I just added " << x << endl;
+		//array[startIndex] = x;
 		size += 1;
 	}
 }
@@ -85,11 +99,15 @@ void CircularDynamicArray::grow() {
 	temp_array = new int[capacity] {}; //intialize a larger dynamic array of capacity c
 	for (int i = 0; i < (capacity / 2); i++) {
 		temp_array[i] = array[i];
-		//cout << "im growinggg" << endl;
+		cout << "im growinggg" << endl;
 	}
 	array = temp_array;
-	startIndex = 0;
-	//endIndex = capacity;
+	//startIndex = 0;
+	front_ptr = array;
+	//back_ptr += size;
+	back_ptr = array;
+	back_ptr += size;
+	//endIndex = size;
 	cout << "new capacity = " << capacity << endl;
 
 	//TODO
