@@ -31,7 +31,7 @@ void CircularDynamicArray::addEnd(int x) {
 		back_ptr++;
 	}
 	if (size == capacity) {
-		grow();
+		grow(1);
 	}
 	*back_ptr = x;
 	//cout << "endIndex = " << endIndex << endl;
@@ -57,7 +57,10 @@ void CircularDynamicArray::addEnd(int x) {
 
 void CircularDynamicArray::addFront(int x) {
 	if (size == capacity)
-		grow();
+		grow(0);
+	else {
+		front_ptr++;
+	}
 	if (size == 0) {
 		addEnd(x);
 		front_ptr = array;
@@ -75,10 +78,11 @@ void CircularDynamicArray::addFront(int x) {
 		//else {
 		//	startIndex--;
 		//}
-		//cout << "Start index = " << startIndex << endl;
+		*front_ptr = x;
 		cout << "I just added " << x << endl;
-		//array[startIndex] = x;
 		size += 1;
+		printArray();
+		printFrontBack();
 	}
 }
 
@@ -97,7 +101,7 @@ void CircularDynamicArray::printFrontBack() {
 	cout << "BACK: " << *back_ptr << endl;
 }
 
-void CircularDynamicArray::grow() {
+void CircularDynamicArray::grow(bool x) {
 	capacity *= 2;
 	temp_array = new int[capacity] {}; //intialize a larger dynamic array of capacity c
 	for (int i = 0; i < (capacity / 2); i++) {
@@ -105,12 +109,16 @@ void CircularDynamicArray::grow() {
 		cout << "im growinggg" << endl;
 	}
 	array = temp_array;
-	//startIndex = 0;
-	front_ptr = array;
-	//back_ptr += size;
-	back_ptr = array;
-	back_ptr += size;
-	//endIndex = size;
+	if (x) {
+		front_ptr = array;
+		back_ptr = array;
+		back_ptr += size;
+	}
+	else {
+		front_ptr = array;
+		front_ptr += size;
+		back_ptr = array;
+	}
 	cout << "new capacity = " << capacity << endl;
 
 	//TODO

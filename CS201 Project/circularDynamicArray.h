@@ -12,7 +12,7 @@ private:
 	int* front_ptr;
 	int* back_ptr;
 	int* temp_ptr;
-	void grow();
+	void grow(bool x);
 public:
 	CircularDynamicArray();
 	CircularDynamicArray(int s);
