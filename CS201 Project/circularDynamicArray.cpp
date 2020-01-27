@@ -9,7 +9,7 @@ CircularDynamicArray::CircularDynamicArray() {
 	temp_ptr = NULL;
 	array = new int[capacity] {}; //intialize a dynamic array of capacity 2
 	front_ptr = NULL;
-	back_ptr = array;
+	back_ptr = NULL;
 }
 
 CircularDynamicArray::CircularDynamicArray(int s) {
@@ -23,14 +23,17 @@ CircularDynamicArray::~CircularDynamicArray() {
 }
 
 void CircularDynamicArray::addEnd(int x) {
-	if (size == capacity) {
-		grow();
-		*back_ptr = x;
+	if (size == 0) {
+		front_ptr = array;
+		back_ptr = array;
 	}
 	else {
-		*back_ptr = x;
 		back_ptr++;
 	}
+	if (size == capacity) {
+		grow();
+	}
+	*back_ptr = x;
 	//cout << "endIndex = " << endIndex << endl;
 	
 	cout << "I just added " << x << endl;
