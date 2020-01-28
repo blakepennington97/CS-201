@@ -4,16 +4,18 @@
 #include <iostream>
 #include <stdio.h>
 #include "circularDynamicArray.h"
+#include "circularDynamicArray.cpp"
 using namespace std;
 
 int main()
 {
-    CircularDynamicArray arr;
-    arr.addEnd(1);
-    arr.addEnd(2);
-    arr.addEnd(3);
-    arr.addEnd(4);
-    arr.printArray();
+    CircularDynamicArray<char> arr;
+    arr.addEnd('f');
+    //arr.addFront(2);
+    arr.addEnd('k');
+    //arr.addFront(4);
+    //arr.printArray();
+    //arr.printFrontBack();
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
