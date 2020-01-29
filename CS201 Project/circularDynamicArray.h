@@ -1,15 +1,22 @@
 #pragma once
 template <typename T>
+struct Node {
+	int index;
+	T* ptr;
+};
+
+
+template <typename T>
 class CircularDynamicArray {
 	private:
 		int size;
 		int capacity;
 		T* array;
 		T* temp_array;
-		T* front_ptr;
-		T* back_ptr;
-		T* temp_ptr;
-		void grow(bool x);
+		Node <int> temp_ptr;
+		Node <int> front;
+		Node <int> back;
+		void grow();
 	public:
 		CircularDynamicArray();
 		CircularDynamicArray(int s);

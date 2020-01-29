@@ -9,11 +9,19 @@ using namespace std;
 
 int main()
 {
-    CircularDynamicArray<char> arr;
-    arr.addEnd('f');
+    CircularDynamicArray<int> arr;
+    arr.addEnd(1);
+    arr.addEnd(2);
+    arr.addEnd(3);    
+    arr.addEnd(4);
+    arr.addEnd(5);
+    arr.addEnd(6);    
+    arr.addEnd(7);
+    arr.addEnd(8);
+    arr.addEnd(9);
+    //arr.addFront(1);
     //arr.addFront(2);
-    arr.addEnd('k');
-    //arr.addFront(4);
+    //arr.addFront(3);
     //arr.printArray();
     //arr.printFrontBack();
 }

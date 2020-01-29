@@ -7,17 +7,26 @@ CircularDynamicArray<T>::CircularDynamicArray() {
 	size = 0;
 	capacity = 1;
 	temp_array = NULL;
-	temp_ptr = NULL;
 	array = new T[capacity] {}; //intialize a dynamic array of capacity 2
-	front_ptr = NULL;
-	back_ptr = NULL;
+	front.ptr = array;
+	front.index = 0;
+	back.ptr = array;
+	back.index = 0;
+	temp_ptr.ptr = NULL;
+	temp_ptr.index = NULL;
 }
 
 template <typename T>
 CircularDynamicArray<T>::CircularDynamicArray(int s) {
 	size = capacity = s;
-	front_ptr = new int[capacity];
-	back_ptr = front_ptr;
+	temp_array = NULL;
+	array = new T[capacity] {}; //intialize a dynamic array of capacity 2
+	front.ptr = array;
+	front.index = 0;
+	back.ptr = array;
+	back.index = 0;
+	temp_ptr.ptr = NULL;
+	temp_ptr.index = NULL;
 }
 
 template <typename T>
@@ -27,68 +36,60 @@ CircularDynamicArray<T>::~CircularDynamicArray() {
 
 template <typename T>
 void CircularDynamicArray<T>::addEnd(T x) {
-	if (size == 0) {
-		front_ptr = array;
-		back_ptr = array;
+	if (size == capacity) {
+		grow();
+	}
+	//if (size == 0) { //freshly added
+	//	back.ptr--;
+	//	back.index--;
+	//}
+	if (back.index > capacity) {
+		back.index -= capacity;
+		back.ptr -= capacity;
+		*back.ptr = x;
+		back.ptr++;
+		back.index++;
 	}
 	else {
-		back_ptr++;
-	}
-	if (size == capacity) {
-		grow(1);
-	}
-	*back_ptr = x;
-	//cout << "endIndex = " << endIndex << endl;
-	
-	cout << "I just added " << x << endl;
-
-	/*for (int i = 0; i < capacity; i++) {
-		cout << array[i] << endl;
-	}*/
-	if (size == 0) {
-		front_ptr = array;
+		*back.ptr = x;
+		back.ptr++;
+		back.index++;
 	}
 	size += 1;
-	/*if (size != 1) {
-		back_ptr++;
-	}
-	else {
-		front_ptr = array;
-	}*/
+	cout << "I just added " << x << endl;
 	printArray();
 	printFrontBack();
 }
 
 template <typename T>
 void CircularDynamicArray<T>::addFront(T x) {
-	if (size == capacity)
-		grow(0, x);
-	else {
-		front_ptr++;
+	bool just_grew = false;
+	if (size == capacity) {
+		grow();
+		just_grew = true;
 	}
 	if (size == 0) {
 		addEnd(x);
-		front_ptr = array;
+		size--; //this is just to subtract from the addition made in addEnd
 	}
-	else
-	{
-		//if (startIndex == -1) { //if startIndex is too small
-		//	startIndex += capacity;
-		//	cout << "startIndex too small." << endl;
-		//}
-		//if (startIndex > capacity) { //if startIndex is too large
-		//	startIndex -= capacity;
-		//	cout << "startIndex too thicc." << endl;
-		//}
-		//else {
-		//	startIndex--;
-		//}
-		*front_ptr = x;
-		cout << "I just added " << x << endl;
-		size += 1;
-		printArray();
-		printFrontBack();
+	else if (!just_grew) {
+		front.index--;
+		if (front.index < 0) { // if just growed, dont do this?
+			front.index += capacity;
+			front.ptr += capacity;
+		}
+		else {
+			front.ptr--;
+		}
+		*front.ptr = x;
 	}
+	else {
+		*front.ptr = x;
+	}
+	cout << "I just added " << x << endl;
+	size += 1;
+	printArray();
+	printFrontBack();
 }
 
 template <typename T>
@@ -104,31 +105,59 @@ void CircularDynamicArray<T>::printArray() {
 
 template <typename T>
 void CircularDynamicArray<T>::printFrontBack() {
-	cout << "HEAD: " << *front_ptr << endl;
-	cout << "BACK: " << *back_ptr << endl;
+	cout << "HEAD: " << *front.ptr << endl;
+	cout << "HEAD INDEX: " << front.index << endl;
+	cout << "BACK: " << *back.ptr << endl;
+	cout << "BACK INDEX: " << back.index << endl;
 }
 
 template <typename T>
-void CircularDynamicArray<T>::grow(bool x) {
+void CircularDynamicArray<T>::grow() {
 	capacity *= 2;
 	temp_array = new T[capacity] {}; //intialize a larger dynamic array of capacity c
-	for (int i = 0; i < (capacity / 2); i++) {
-		//TODO: rearrange in corrected head->tail order
-		temp_array[i] = array[i];
-		cout << "im growinggg" << endl;
+	//for (int i = 0; i < capacity / 2; i++) {
+	//	temp_array[i] = array[i];
+	//	cout << "im growinggg" << endl;~
+	//}
+	int i = 0;
+	if (front.index < back.index) { //if front before back
+		for (temp_ptr = front; temp_ptr.index != back.index; temp_ptr.index++, temp_ptr.ptr++) {
+			if (temp_ptr.index > capacity / 2) {
+				temp_ptr.index -= capacity;
+				temp_ptr.ptr -= capacity;
+				temp_array[i] = *temp_ptr.ptr;
+			}
+			else {
+				temp_array[i] = *temp_ptr.ptr;
+			}
+			i++;
+			cout << "im growinggg" << endl;
+		}
 	}
+	//else if (back.index < front.index) { //if back before front
+	//	for (temp_ptr = back; temp_ptr.index != front.index; temp_ptr.index--) {
+	//		int i = capacity / 2;
+	//		//temp_ptr.index--;
+	//		if (temp_ptr.index < 0) {
+	//			temp_ptr.index += capacity;
+	//			temp_ptr.ptr += capacity;
+	//		}
+	//		else {
+	//			temp_ptr.ptr--;
+	//		}
+	//		temp_array[i] = *temp_ptr.ptr;
+	//		i--;
+	//		cout << "im growinggg" << endl;
+	//	}
+	//}
 	array = temp_array;
-	if (x) {
-		front_ptr = array;
-		back_ptr = array;
-		back_ptr += size;
-	}
-	else {
-		front_ptr = array;
-		front_ptr += size;
-		back_ptr = array;
-	}
+	front.index = 0;
+	front.ptr = array;
+	back.index = size;
+	back.ptr = array;
+	back.ptr += size;
 	cout << "new capacity = " << capacity << endl;
+
 
 	//TODO
 	/*
