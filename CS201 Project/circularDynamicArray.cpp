@@ -39,16 +39,15 @@ void CircularDynamicArray<T>::addEnd(T x) {
 	if (size == capacity) {
 		grow();
 	}
-	//if (size == 0) { //freshly added
-	//	back.ptr--;
-	//	back.index--;
-	//}
 	if (back.index > capacity) {
 		back.index -= capacity;
 		back.ptr -= capacity;
 		*back.ptr = x;
 		back.ptr++;
 		back.index++;
+	}
+	if (size == 0) { //freshly added
+		*back.ptr = x;
 	}
 	else {
 		*back.ptr = x;
@@ -63,29 +62,27 @@ void CircularDynamicArray<T>::addEnd(T x) {
 
 template <typename T>
 void CircularDynamicArray<T>::addFront(T x) {
-	bool just_grew = false;
 	if (size == capacity) {
 		grow();
-		just_grew = true;
 	}
 	if (size == 0) {
 		addEnd(x);
 		size--; //this is just to subtract from the addition made in addEnd
 	}
-	else if (!just_grew) {
+	else {
 		front.index--;
 		if (front.index < 0) { // if just growed, dont do this?
 			front.index += capacity;
-			front.ptr += capacity;
+			front.ptr += size; // front.ptr %= capacity
 		}
 		else {
 			front.ptr--;
 		}
 		*front.ptr = x;
 	}
-	else {
+	/*else {
 		*front.ptr = x;
-	}
+	}*/
 	cout << "I just added " << x << endl;
 	size += 1;
 	printArray();
@@ -120,6 +117,11 @@ void CircularDynamicArray<T>::grow() {
 	//	cout << "im growinggg" << endl;~
 	//}
 	int i = 0;
+	if (front.index == back.index) { //happens when array is size = 1 (in the beginning)
+		temp_ptr = front;
+		temp_array[i] = *temp_ptr.ptr;
+		cout << "im growinggg" << endl;
+	}
 	if (front.index < back.index) { //if front before back
 		for (temp_ptr = front; temp_ptr.index != back.index; temp_ptr.index++, temp_ptr.ptr++) {
 			if (temp_ptr.index > capacity / 2) {
@@ -153,9 +155,9 @@ void CircularDynamicArray<T>::grow() {
 	array = temp_array;
 	front.index = 0;
 	front.ptr = array;
-	back.index = size;
-	back.ptr = array;
-	back.ptr += size;
+	back.index = size; //i think wrong
+	back.ptr = front.ptr; //TEST
+	back.ptr += size; //TEST
 	cout << "new capacity = " << capacity << endl;
 
 
