@@ -37,7 +37,7 @@ CircularDynamicArray<T>::~CircularDynamicArray() {
 template <typename T>
 T&CircularDynamicArray<T>::operator[](int i) {
 	if (i > capacity) {
-		cout << "INDEX TOO LARGE NIGGA" << endl;
+		cout << "INDEX TOO LARGE HOMIE" << endl;
 	}
 	else {
 		return array[i];
@@ -81,9 +81,9 @@ void CircularDynamicArray<T>::addFront(T x) {
 	}
 	else {
 		front.index--;
-		if (front.index < 0) { // if just growed, dont do this?
-			front.index += capacity; // need mod formula here
-			front.ptr += capacity - 1; // front.ptr %= capacity
+		if (front.index < 0) {
+			front.index += capacity; 
+			front.ptr += capacity - 1; 
 		}
 		else {
 			front.ptr--;

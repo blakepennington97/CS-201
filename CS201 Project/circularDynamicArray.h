@@ -13,9 +13,9 @@ class CircularDynamicArray {
 		int capacity;
 		T* array;
 		T* temp_array;
-		Node <int> temp_ptr;
-		Node <int> front;
-		Node <int> back;
+		Node <T> temp_ptr;
+		Node <T> front;
+		Node <T> back;
 		void grow();
 	public:
 		CircularDynamicArray();
