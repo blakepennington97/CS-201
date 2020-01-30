@@ -35,6 +35,16 @@ CircularDynamicArray<T>::~CircularDynamicArray() {
 }
 
 template <typename T>
+T&CircularDynamicArray<T>::operator[](int i) {
+	if (i > capacity) {
+		cout << "INDEX TOO LARGE NIGGA" << endl;
+	}
+	else {
+		return array[i];
+	}
+}
+
+template <typename T>
 void CircularDynamicArray<T>::addEnd(T x) {
 	if (size == capacity) {
 		grow();

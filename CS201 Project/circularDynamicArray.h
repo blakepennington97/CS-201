@@ -21,6 +21,7 @@ class CircularDynamicArray {
 		CircularDynamicArray();
 		CircularDynamicArray(int s);
 		~CircularDynamicArray();
+		T& operator[](int i);
 		void addEnd(T x);
 		void addFront(T x);
 		void printArray();
