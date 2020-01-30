@@ -10,14 +10,14 @@ using namespace std;
 int main()
 {
     CircularDynamicArray<int> arr;
-    arr.addEnd(1);
+/*    arr.addEnd(1);
     arr.addEnd(2);
-    arr.addEnd(3);    
-    //arr.addFront(1);
-    //arr.addFront(2);
-    //arr.addFront(3);
-    //arr.addFront(4);
-    //arr.addFront(5);
+    arr.addEnd(3);*/    //ADD FRONT WORKINGGGGG
+    arr.addFront(1);
+    arr.addFront(2);
+    arr.addFront(3);
+    arr.addFront(4);
+    arr.addFront(5);
     //arr.addFront(6);
     //arr.printArray();
     //arr.printFrontBack();
