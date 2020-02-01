@@ -7,23 +7,28 @@ struct Node {
 
 
 template <typename T>
-class CircularDynamicArray {
+class CDA {
 	private:
 		int size;
 		int capacity;
+		bool ordered;
 		T* array;
 		T* temp_array;
 		Node <T> temp_ptr;
 		Node <T> front;
 		Node <T> back;
 		void grow();
+		void shrink();
 	public:
-		CircularDynamicArray();
-		CircularDynamicArray(int s);
-		~CircularDynamicArray();
+		CDA();
+		CDA(int s);
+		~CDA();
 		T& operator[](int i);
-		void addEnd(T x);
-		void addFront(T x);
+		void AddEnd(T x);
+		void AddFront(T x);
+		void DelEnd();
+		void DelFront();
+		int Length();
 		void printArray();
 		void printFrontBack();
 };

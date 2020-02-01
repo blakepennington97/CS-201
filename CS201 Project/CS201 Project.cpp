@@ -9,21 +9,23 @@ using namespace std;
 
 int main()
 {
-    CircularDynamicArray<int> arr;
-    arr.addEnd(1);
-    arr.addFront(2);
-    arr.addEnd(3);
-    arr.addFront(4);
-    arr.addEnd(5);
-    //int x = arr[10];
-    //cout << "x: " << x << endl;
-    //arr.addFront(2);
-    //arr.addFront(3);
-    //arr.addFront(4);
-    //arr.addFront(5);
-    //arr.addFront(6);
-    //arr.printArray();
-    //arr.printFrontBack();
+	CDA<int> C(10);
+	for (int i = 0; i < C.Length(); i++) C[i] = i;
+	for (int i = 0; i < C.Length(); i++) cout << C[i] << " ";  cout << endl;
+	// C => "0 1 2 3 4 5 6 7 8 9"
+	C.DelEnd();
+	for (int i = 0; i < C.Length(); i++) cout << C[i] << " ";  cout << endl;
+	// C => "0 1 2 3 4 5 6 7 8"
+	C.AddEnd(100);
+	for (int i = 0; i < C.Length(); i++) cout << C[i] << " ";  cout << endl;
+	// C => "0 1 2 3 4 5 6 7 8 100"
+	C.AddEnd(101);
+	for (int i = 0; i < C.Length(); i++) cout << C[i] << " ";  cout << endl;
+	// C => "0 1 2 3 4 5 6 7 8 100 101"
+	C.DelEnd(); C.DelEnd();
+	C.AddFront(-100); C.AddFront(-200);
+	for (int i = 0; i < C.Length(); i++) cout << C[i] << " ";  cout << endl;
+	// C => "-200 -100 1 2 3 4 5 6 7 8"
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

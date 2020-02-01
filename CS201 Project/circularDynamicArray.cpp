@@ -3,11 +3,12 @@
 using namespace std;
 
 template <typename T>
-CircularDynamicArray<T>::CircularDynamicArray() {
+CDA<T>::CDA() {
 	size = 0;
 	capacity = 1;
+	ordered = false;
 	temp_array = NULL;
-	array = new T[capacity] {}; //intialize a dynamic array of capacity 2
+	array = new T[capacity] {}; //initialize a dynamic array of capacity 2
 	front.ptr = array;
 	front.index = 0;
 	back.ptr = array;
@@ -17,35 +18,48 @@ CircularDynamicArray<T>::CircularDynamicArray() {
 }
 
 template <typename T>
-CircularDynamicArray<T>::CircularDynamicArray(int s) {
+CDA<T>::CDA(int s) {
 	size = capacity = s;
+	ordered = false;
 	temp_array = NULL;
-	array = new T[capacity] {}; //intialize a dynamic array of capacity 2
+	array = new T[capacity] {}; //intialize a dynamic array of capacity s
 	front.ptr = array;
 	front.index = 0;
-	back.ptr = array;
-	back.index = 0;
+	back = front;
+	back.ptr += size - 1;
+	back.index += size - 1;
 	temp_ptr.ptr = NULL;
 	temp_ptr.index = NULL;
+	printArray();
 }
 
 template <typename T>
-CircularDynamicArray<T>::~CircularDynamicArray() {
+CDA<T>::~CDA() {
 	//delete stuff
 }
 
 template <typename T>
-T&CircularDynamicArray<T>::operator[](int i) {
+T&CDA<T>::operator[](int i) {
 	if (i > capacity) {
 		cout << "INDEX TOO LARGE HOMIE" << endl;
+		//need to do more here as said by Dixon in class, something about creating a dummy variable to assign??
+		return array[0]; // idk??
 	}
 	else {
-		return array[i];
+		temp_ptr = front;
+		if (temp_ptr.index + i > capacity - 1) {
+			temp_ptr.index = temp_ptr.index - capacity + i;
+			temp_ptr.ptr = temp_ptr.ptr - capacity + i;
+			return array[temp_ptr.index];
+		}
+		else {
+			return array[temp_ptr.index + i];
+		}
 	}
 }
 
 template <typename T>
-void CircularDynamicArray<T>::addEnd(T x) {
+void CDA<T>::AddEnd(T x) {
 	if (size == capacity) {
 		grow();
 	}
@@ -71,12 +85,12 @@ void CircularDynamicArray<T>::addEnd(T x) {
 }
 
 template <typename T>
-void CircularDynamicArray<T>::addFront(T x) {
+void CDA<T>::AddFront(T x) {
 	if (size == capacity) {
 		grow();
 	}
 	if (size == 0) {
-		addEnd(x);
+		AddEnd(x);
 		size--; //this is just to subtract from the addition made in addEnd
 	}
 	else {
@@ -100,58 +114,71 @@ void CircularDynamicArray<T>::addFront(T x) {
 }
 
 template <typename T>
-void CircularDynamicArray<T>::printArray() {
+void CDA<T>::DelEnd() {
+	if (size == 0) {
+		size++; //to nullify the size-- at the end of this function
+	}
+	else if (back.index == 0) {
+		back.index += size - 1;
+		back.ptr += size - 1;
+	}
+	else {
+		back.index--;
+		back.ptr--;
+	}
+	size--;
+	//capacity--; //added because if I have [0 1 2 3 4 5 6 7 8 9], i DelEnd(9), then i attempt to add front, it will not grow because capacity it still believed to be 10
+	cout << "I just deleted end" << endl;
+
+	cout << ((double(size) / double(capacity))) << endl;
+	if (size > 1) {
+		if ((double(size) / double(capacity)) <= 0.25) {
+			/*if (size == 1) {
+				break;
+			}*/
+			shrink();
+		}
+		/*if (not ordered) {
+			order()
+		}*/
+	}
+	printArray();
+	printFrontBack();
+}
+
+template <typename T>
+void CDA<T>::DelFront() {
+
+}
+
+template <typename T>
+int CDA<T>::Length() {
+	return size;
+}
+
+template <typename T>
+void CDA<T>::printArray() {
 	cout << "[";
-	for (int i = 0; i < capacity; i++) {
+	for (int i = 0; i < size; i++) {
 		cout << array[i];
-		if (i < capacity - 1)
+		if (i < size - 1)
 			cout << ", ";
 	}
 	cout <<  "]" << endl;
-	//cout << "[";
-	//int i = 0;
-	//if (front.index == back.index) { //happens when array is size = 1 (in the beginning)
-	//	temp_ptr = front;
-	//	cout << *temp_ptr.ptr;
-	//}
-	//else {
-	//	for (temp_ptr = front; temp_ptr.index != back.index; temp_ptr.index++, temp_ptr.ptr++) {
-	//		if (temp_ptr.index > size - 1) {
-	//			temp_ptr.index -= size;
-	//			temp_ptr.ptr -= size;
-	//			cout << *temp_ptr.ptr;
-	//			if (temp_ptr.index == back.index) {
-	//				break;
-	//			}
-	//		}
-	//		else {
-	//			cout << *temp_ptr.ptr;
-	//		}
-	//		i++;
-	//		//cout << "im printingggg" << endl;
-	//	}
-	//}
-	//if (i < capacity - 1)
-	//	cout << ", ";
-	//cout << "]" << endl;
 }
 
 template <typename T>
-void CircularDynamicArray<T>::printFrontBack() {
+void CDA<T>::printFrontBack() {
 	cout << "HEAD: " << *front.ptr << endl;
-	cout << "HEAD INDEX: " << front.index << endl;
 	cout << "BACK: " << *back.ptr << endl;
-	cout << "BACK INDEX: " << back.index << endl;
+	cout << "head index: " << front.index << endl;
+	cout << "back index: " << back.index << endl;
 }
 
 template <typename T>
-void CircularDynamicArray<T>::grow() {
+void CDA<T>::grow() {
 	capacity *= 2;
 	temp_array = new T[capacity] {}; //intialize a larger dynamic array of capacity c
-	//for (int i = 0; i < capacity / 2; i++) {
-	//	temp_array[i] = array[i];
-	//	cout << "im growinggg" << endl;~
-	//}
 	int i = 0;
 	if (front.index == back.index) { //happens when array is size = 1 (in the beginning)
 		temp_ptr = front;
@@ -176,22 +203,6 @@ void CircularDynamicArray<T>::grow() {
 			temp_ptr.ptr++;
 		}
 	}
-	//else if (back.index < front.index) { //if back before front
-	//	for (temp_ptr = back; temp_ptr.index != front.index; temp_ptr.index--) {
-	//		int i = capacity / 2;
-	//		//temp_ptr.index--;
-	//		if (temp_ptr.index < 0) {
-	//			temp_ptr.index += capacity;
-	//			temp_ptr.ptr += capacity;
-	//		}
-	//		else {
-	//			temp_ptr.ptr--;
-	//		}
-	//		temp_array[i] = *temp_ptr.ptr;
-	//		i--;
-	//		cout << "im growinggg" << endl;
-	//	}
-	//}
 	array = temp_array;
 	front.index = 0;
 	front.ptr = array;
@@ -200,21 +211,42 @@ void CircularDynamicArray<T>::grow() {
 	back.ptr = array; 
 	back.ptr += (size - 1); 
 	cout << "new capacity = " << capacity << endl;
+}
 
-
-	//TODO
-	/*
-	delete old array (caused bug in past)
-	allocate a new store with the new capacity
-	copy the elements from the old store to the new store
-	free the old store
-	set the data structure's store to the new store
-	update the capacity
-	the start index is usually reset to zero. 
-	Thus, the element at the start index of the old store 
-	gets placed in the leftmost slot in the new store, and so on. 
-	When computing the index of the next element to be transferred, 
-	the incrementIndex or correctIndex functions should be used.
-	*/
-
+template <typename T>
+void CDA<T>::shrink() {
+	capacity /= 2;
+	temp_array = new T[capacity]{}; //intialize a smaller dynamic array of capacity c
+	int i = 0;
+	if (front.index == back.index) { //happens when array is size = 1
+		temp_ptr = front;
+		temp_array[i] = *temp_ptr.ptr;
+		cout << "im shrinkinggg" << endl;
+	}
+	else { //if front before back
+		for (temp_ptr = front; i < capacity / 2; i++) {
+			if (temp_ptr.index > size - 1) {
+				temp_ptr.index -= size;
+				temp_ptr.ptr -= size;
+				temp_array[i] = *temp_ptr.ptr;
+				if (temp_ptr.index == back.index) {
+					break;
+				}
+			}
+			else {
+				temp_array[i] = *temp_ptr.ptr;
+			}
+			cout << "im shrinkinggg" << endl;
+			temp_ptr.index++;
+			temp_ptr.ptr++;
+		}
+	}
+	array = temp_array;
+	front.index = 0;
+	front.ptr = array;
+	back.index = 0;
+	back.index += (size - 1); //can't be += size , could be index % size
+	back.ptr = array;
+	back.ptr += (size - 1);
+	cout << "new capacity = " << capacity << endl;
 }
