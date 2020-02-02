@@ -19,6 +19,10 @@ class CDA {
 		Node <T> back;
 		void grow();
 		void shrink();
+		int Partition(int left, int right, int pivot_index);
+		int QuickSelect(int left, int right, int k);
+		void printArray();
+		void printFrontBack();
 	public:
 		CDA();
 		CDA(int s);
@@ -29,7 +33,9 @@ class CDA {
 		void DelEnd();
 		void DelFront();
 		int Length();
-		void printArray();
-		void printFrontBack();
+		bool Ordered();
+		int SetOrdered();
+		T Select(int k);
+		void InsertionSort();
 };
 

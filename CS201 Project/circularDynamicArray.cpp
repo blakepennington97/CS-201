@@ -1,5 +1,6 @@
 #include "CircularDynamicArray.h"
 #include <iostream>
+#include <random>
 using namespace std;
 
 template <typename T>
@@ -210,6 +211,45 @@ int CDA<T>::Length() {
 }
 
 template <typename T>
+bool CDA<T>::Ordered() {
+	return ordered;
+}
+
+template <typename T>
+int CDA<T>::SetOrdered() {
+	//iterate through array to check if array is ordered
+	ordered = true;
+	for (int i = 0; i < Length() - 1; i++) {
+		if (array[i] < array[i + 1]) {
+			continue;
+		}
+		else {
+			ordered = false;
+		}
+	}
+	return ordered;
+}
+
+
+template <typename T>
+T CDA<T>::Select(int k) {
+	if (ordered == true) {
+		return array[k - 1];
+	}
+	else {
+		cout << "QUICKSORTING BITCHES" << endl;
+		return QuickSelect(front.index, back.index, k);
+	}
+}
+
+template <typename T>
+void CDA<T>::InsertionSort() {
+	//perform insertion sort on array, then set ordered to true
+
+}
+
+
+template <typename T>
 void CDA<T>::printArray() {
 	cout << "[";
 	for (int i = 0; i < capacity; i++) {
@@ -302,4 +342,66 @@ void CDA<T>::shrink() {
 	back.ptr = array;
 	back.ptr += (size - 1);
 	cout << "new capacity = " << capacity << endl;
+}
+
+template <typename T>
+int CDA<T>::Partition(int left, int right, int pivot_index) {
+	temp_array = array;
+	// Pick pivot_index as pivot from the array
+	T pivot = temp_array[pivot_index];
+
+	// Move pivot to end
+	swap(temp_array[pivot_index], temp_array[right]);
+
+	// elements less than pivot will be pushed to the left of pIndex
+	// elements more than pivot will be pushed to the right of pIndex
+	// equal elements can go either way
+	int p_index = left;
+	int i;
+
+	// each time we finds an element less than or equal to pivot, pIndex
+	// is incremented and that element would be placed before the pivot.
+	for (i = left; i < right; i++)
+	{
+		if (temp_array[i] <= pivot)
+		{
+			swap(temp_array[i], temp_array[p_index]);
+			p_index++;
+		}
+	}
+
+	// Move pivot to its final place
+	swap(temp_array[p_index], temp_array[right]);
+
+	// return p_index (index of pivot element)
+	return p_index;
+}
+
+template <typename T>
+int CDA<T>::QuickSelect(int left, int right, int k) {
+	// If the array contains only one element, return that element
+	if (left == right)
+		return array[left];
+
+	// select a pivotIndex between left and right
+	if (left <= right) {
+		int pivot_index = left + rand() % (right - left);
+	}
+	else { //right > left
+		int pivot_index = 0; // work stopped here, 0 is not right
+	}
+
+	pivot_index = Partition(left, right, pivot_index);
+
+	// The pivot is in its final sorted position
+	if (k == pivot_index)
+		return array[k];
+
+	// if k is less than the pivot index
+	else if (k < pivot_index)
+		return QuickSelect(left, pivot_index - 1, k);
+
+	// if k is more than the pivot index
+	else
+		return QuickSelect(pivot_index + 1, right, k);
 }
