@@ -7,7 +7,7 @@ template <typename T>
 CDA<T>::CDA() {
 	size = 0;
 	capacity = 1;
-	ordered = false;
+	ordered = -1;
 	temp_array = NULL;
 	array = new T[capacity] {}; //initialize a dynamic array of capacity 2
 	front.ptr = array;
@@ -21,7 +21,7 @@ CDA<T>::CDA() {
 template <typename T>
 CDA<T>::CDA(int s) {
 	size = capacity = s;
-	ordered = false;
+	ordered = -1;
 	temp_array = NULL;
 	array = new T[capacity] {}; //intialize a dynamic array of capacity s
 	front.ptr = array;
@@ -212,19 +212,22 @@ int CDA<T>::Length() {
 
 template <typename T>
 bool CDA<T>::Ordered() {
-	return ordered;
+	if (ordered == 1) {
+		return true;
+	}
+	return false;
 }
 
 template <typename T>
 int CDA<T>::SetOrdered() {
 	//iterate through array to check if array is ordered
-	ordered = true;
+	ordered = 1;
 	for (int i = 0; i < Length() - 1; i++) {
 		if (array[i] < array[i + 1]) {
 			continue;
 		}
 		else {
-			ordered = false;
+			ordered = -1;
 		}
 	}
 	return ordered;
@@ -233,12 +236,27 @@ int CDA<T>::SetOrdered() {
 
 template <typename T>
 T CDA<T>::Select(int k) {
-	if (ordered == true) {
+	if (ordered == 1) {
 		return array[k - 1];
 	}
 	else {
 		cout << "QUICKSORTING BITCHES" << endl;
-		return QuickSelect(front.index, back.index, k);
+		//build array front -> back
+		temp_array = new T[Length()] {};
+
+		for (int i = 0; i < Length(); i++) {
+			if (front.index == 0) {
+				temp_array[i] = array[front.index + i];
+			}
+			else if (back.index < front.index) {
+				temp_array[i] = array[(front.index + i) % capacity];
+			}
+			else {
+				temp_array[i] = array[(front.index + i)];
+			}
+		}
+		for (int i = 0; i < Length(); i++) cout << temp_array[i] << " ";  cout << endl; // print new array
+		return QuickSelect(0, Length(), k);
 	}
 }
 
@@ -346,7 +364,6 @@ void CDA<T>::shrink() {
 
 template <typename T>
 int CDA<T>::Partition(int left, int right, int pivot_index) {
-	temp_array = array;
 	// Pick pivot_index as pivot from the array
 	T pivot = temp_array[pivot_index];
 
@@ -381,21 +398,16 @@ template <typename T>
 int CDA<T>::QuickSelect(int left, int right, int k) {
 	// If the array contains only one element, return that element
 	if (left == right)
-		return array[left];
+		return temp_array[left];
 
 	// select a pivotIndex between left and right
-	if (left <= right) {
-		int pivot_index = left + rand() % (right - left);
-	}
-	else { //right > left
-		int pivot_index = 0; // work stopped here, 0 is not right
-	}
+	int pivot_index = left + rand() % (right - left + 1);
 
 	pivot_index = Partition(left, right, pivot_index);
 
 	// The pivot is in its final sorted position
 	if (k == pivot_index)
-		return array[k];
+		return temp_array[k];
 
 	// if k is less than the pivot index
 	else if (k < pivot_index)
@@ -404,4 +416,42 @@ int CDA<T>::QuickSelect(int left, int right, int k) {
 	// if k is more than the pivot index
 	else
 		return QuickSelect(pivot_index + 1, right, k);
+}
+
+template <typename T>
+T CDA<T>::Search(T e) {
+	if (ordered == 1) {
+		//binary search
+		return binarySearch(0, capacity, e);
+	}
+	else {
+		//linear search
+		for (int i = 0; i < capacity; i++) {
+			if (array[i] = e) {
+				return i;
+			}
+		}
+	}
+	return -1;
+}
+
+template <typename T>
+int CDA<T>::binarySearch(int left, int right, T e) {
+	if (right >= left) {
+		int mid = left + (right - left) / 2;
+
+		// If the element is present at the middle 
+		// itself 
+		if (array[mid] == e)
+			return mid;
+
+		// If element is smaller than mid, then 
+		// it can only be present in left subarray 
+		if (array[mid] > e)
+			return binarySearch(left, mid - 1, e);
+
+		// Else the element can only be present 
+		// in right subarray 
+		return binarySearch(mid + 1, right, e);
+	}
 }

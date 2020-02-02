@@ -11,7 +11,7 @@ class CDA {
 	private:
 		int size;
 		int capacity;
-		bool ordered;
+		int ordered;
 		T* array;
 		T* temp_array;
 		Node <T> temp_ptr;
@@ -21,6 +21,7 @@ class CDA {
 		void shrink();
 		int Partition(int left, int right, int pivot_index);
 		int QuickSelect(int left, int right, int k);
+		int binarySearch(int left, int right, T e);
 		void printArray();
 		void printFrontBack();
 	public:
@@ -37,5 +38,6 @@ class CDA {
 		int SetOrdered();
 		T Select(int k);
 		void InsertionSort();
+		T Search(T e);
 };
 
