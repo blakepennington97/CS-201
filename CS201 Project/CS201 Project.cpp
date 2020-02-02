@@ -9,23 +9,29 @@ using namespace std;
 
 int main()
 {
-	CDA<int> C(10);
+	CDA<float> C(10);
 	for (int i = 0; i < C.Length(); i++) C[i] = i;
 	for (int i = 0; i < C.Length(); i++) cout << C[i] << " ";  cout << endl;
 	// C => "0 1 2 3 4 5 6 7 8 9"
+	C.DelFront();
+	for (int i = 0; i < C.Length(); i++) cout << C[i] << " ";  cout << endl;
+	// C => "1 2 3 4 5 6 7 8 9"
+	C.DelFront();
+	for (int i = 0; i < C.Length(); i++) cout << C[i] << " ";  cout << endl;
+	// C => "2 3 4 5 6 7 8 9"
 	C.DelEnd();
 	for (int i = 0; i < C.Length(); i++) cout << C[i] << " ";  cout << endl;
-	// C => "0 1 2 3 4 5 6 7 8"
-	C.AddEnd(100);
+	// C => "2 3 4 5 6 7 8"
+	C.AddEnd(100.0);
 	for (int i = 0; i < C.Length(); i++) cout << C[i] << " ";  cout << endl;
-	// C => "0 1 2 3 4 5 6 7 8 100"
-	C.AddEnd(101);
+	// C => "2 3 4 5 6 7 8 100"
+	C.AddEnd(101.0);
 	for (int i = 0; i < C.Length(); i++) cout << C[i] << " ";  cout << endl;
-	// C => "0 1 2 3 4 5 6 7 8 100 101"
+	// C => "2 3 4 5 6 7 8 100 101"
 	C.DelEnd(); C.DelEnd();
-	C.AddFront(-100); C.AddFront(-200);
+	C.AddFront(-100.0); C.AddFront(-200.0);
 	for (int i = 0; i < C.Length(); i++) cout << C[i] << " ";  cout << endl;
-	// C => "-200 -100 1 2 3 4 5 6 7 8"
+	// C => "-200 -100 2 3 4 5 6 7 8"
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

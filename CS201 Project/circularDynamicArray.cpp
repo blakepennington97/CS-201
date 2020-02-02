@@ -46,16 +46,42 @@ T&CDA<T>::operator[](int i) {
 		return array[0]; // idk??
 	}
 	else {
-		temp_ptr = front;
-		if (temp_ptr.index + i > capacity - 1) {
-			temp_ptr.index = temp_ptr.index - capacity + i;
-			temp_ptr.ptr = temp_ptr.ptr - capacity + i;
-			return array[temp_ptr.index];
+		//temp_ptr = front;
+		if (front.index == 0) {
+			return array[front.index + i];
+		}
+		else if (back.index < front.index) {
+			return array[(front.index + i) % capacity];
 		}
 		else {
-			return array[temp_ptr.index + i];
+			return array[(front.index + i)];
+		}
+		//else if (temp_ptr.index + i > capacity - 1) { // > capacity % (temp_ptr.index - 1)
+		//	cout << "HIT" << endl;
+		//	//temp_ptr.index = (i % size) + 1;
+		//	temp_ptr.index = (i % size);
+		//	//temp_ptr.index = ((temp_ptr.index + i) % capacity);
+		//	//temp_ptr.ptr -= ((temp_ptr.index + i) % capacity);
+		//	return array[temp_ptr.index];
+		//}
+		//else {
+		//	return array[temp_ptr.index + i];
+		//}
+	}
+	/*if (temp_ptr.index > size - 1) {
+		temp_ptr.index -= size;
+		temp_ptr.ptr -= size;
+		temp_array[i] = *temp_ptr.ptr;
+		if (temp_ptr.index == back.index) {
+			break;
 		}
 	}
+	else {
+		temp_array[i] = *temp_ptr.ptr;
+	}
+	cout << "im growinggg" << endl;
+	temp_ptr.index++;
+	temp_ptr.ptr++;*/
 }
 
 template <typename T>
@@ -148,7 +174,34 @@ void CDA<T>::DelEnd() {
 
 template <typename T>
 void CDA<T>::DelFront() {
+	if (size == 0) {
+		size++; //to nullify the size-- at the end of this function
+	}
+	else if (front.index == capacity - 1) {
+		front.index -= capacity - 1;
+		front.ptr -= capacity - 1;
+	}
+	else {
+		front.index++;
+		front.ptr++;
+	}
+	size--;
+	cout << "I just deleted front" << endl;
 
+	cout << ((double(size) / double(capacity))) << endl;
+	if (size > 1) {
+		if ((double(size) / double(capacity)) <= 0.25) {
+			/*if (size == 1) {
+				break;
+			}*/
+			shrink();
+		}
+		/*if (not ordered) {
+			order()
+		}*/
+	}
+	printArray();
+	printFrontBack();
 }
 
 template <typename T>
@@ -159,9 +212,9 @@ int CDA<T>::Length() {
 template <typename T>
 void CDA<T>::printArray() {
 	cout << "[";
-	for (int i = 0; i < size; i++) {
+	for (int i = 0; i < capacity; i++) {
 		cout << array[i];
-		if (i < size - 1)
+		if (i < capacity - 1)
 			cout << ", ";
 	}
 	cout <<  "]" << endl;
