@@ -420,14 +420,29 @@ int CDA<T>::QuickSelect(int left, int right, int k) {
 
 template <typename T>
 T CDA<T>::Search(T e) {
+	temp_array = new T[Length()]{};
+
+	for (int i = 0; i < Length(); i++) {
+		if (front.index == 0) {
+			temp_array[i] = array[front.index + i];
+		}
+		else if (back.index < front.index) {
+			temp_array[i] = array[(front.index + i) % capacity];
+		}
+		else {
+			temp_array[i] = array[(front.index + i)];
+		}
+	}
+	for (int i = 0; i < Length(); i++) cout << temp_array[i] << " ";  cout << endl; // print new array
 	if (ordered == 1) {
 		//binary search
-		return binarySearch(0, capacity, e);
+		return binarySearch(0, Length(), e);
 	}
 	else {
 		//linear search
-		for (int i = 0; i < capacity; i++) {
-			if (array[i] = e) {
+		for (int i = 0; i < Length(); i++) {
+			cout << "looking at " << temp_array[i] << endl;
+			if (temp_array[i] == e) {
 				return i;
 			}
 		}
@@ -442,12 +457,12 @@ int CDA<T>::binarySearch(int left, int right, T e) {
 
 		// If the element is present at the middle 
 		// itself 
-		if (array[mid] == e)
+		if (temp_array[mid] == e)
 			return mid;
 
 		// If element is smaller than mid, then 
 		// it can only be present in left subarray 
-		if (array[mid] > e)
+		if (temp_array[mid] > e)
 			return binarySearch(left, mid - 1, e);
 
 		// Else the element can only be present 
