@@ -38,6 +38,8 @@ class CDA {
 		int SetOrdered();
 		T Select(int k);
 		void InsertionSort();
+		void QuickSort();
+		void CountingSort(int m);
 		T Search(T e);
 };
 

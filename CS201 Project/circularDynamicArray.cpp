@@ -37,6 +37,7 @@ CDA<T>::CDA(int s) {
 template <typename T>
 CDA<T>::~CDA() {
 	//delete stuff
+	//delete[]array;
 }
 
 template <typename T>
@@ -109,6 +110,10 @@ void CDA<T>::AddEnd(T x) {
 	cout << "I just added " << x << endl;
 	printArray();
 	printFrontBack();
+
+	if (ordered == 1) {
+		SetOrdered();
+	}
 }
 
 template <typename T>
@@ -138,6 +143,10 @@ void CDA<T>::AddFront(T x) {
 	size += 1;
 	printArray();
 	printFrontBack();
+
+	if (ordered == 1) {
+		SetOrdered();
+	}
 }
 
 template <typename T>
@@ -240,7 +249,7 @@ T CDA<T>::Select(int k) {
 		return array[k - 1];
 	}
 	else {
-		cout << "QUICKSORTING BITCHES" << endl;
+		cout << "quickselecting..." << endl;
 		//build array front -> back
 		temp_array = new T[Length()] {};
 
@@ -262,28 +271,125 @@ T CDA<T>::Select(int k) {
 
 template <typename T>
 void CDA<T>::InsertionSort() {
-	//perform insertion sort on array, then set ordered to true
+	temp_array = new T[Length()]{};
 
+	for (int i = 0; i < Length(); i++) {
+		if (front.index == 0) {
+			temp_array[i] = array[front.index + i];
+		}
+		else if (back.index < front.index) {
+			temp_array[i] = array[(front.index + i) % capacity];
+		}
+		else {
+			temp_array[i] = array[(front.index + i)];
+		}
+	}
+	//perform insertion sort on array, then set ordered to true
+	int key, j;
+	for (int i = 1; i < size; i++) {
+		key = temp_array[i];//take value
+		j = i;
+		while (j > 0 && temp_array[j - 1] > key) {
+			temp_array[j] = temp_array[j - 1];
+			j--;
+		}
+		temp_array[j] = key;   //insert in right place
+	}
+	array = temp_array;
+	front.index = 0;
+	front.ptr = array;
+	back.index = 0;
+	back.index += (size - 1);
+	back.ptr = array;
+	back.ptr += (size - 1);
+}
+
+template <typename T>
+void CDA<T>::QuickSort() {
+	temp_array = new T[Length()] {};
+
+	for (int i = 0; i < Length(); i++) {
+		if (front.index == 0) {
+			temp_array[i] = array[front.index + i];
+		}
+		else if (back.index < front.index) {
+			temp_array[i] = array[(front.index + i) % capacity];
+		}
+		else {
+			temp_array[i] = array[(front.index + i)];
+		}
+	}
+	//for (int i = 0; i < Length(); i++) cout << temp_array[i] << " ";  cout << endl; // print new array
+	//perform algo
+	// Create an auxiliary stack 
+	int left = 0;
+	int right = Length() - 1;
+	int *stack = new int[right - left + 1];
+
+	// initialize top of stack 
+	int top = -1;
+
+	// push initial values of l and h to stack 
+	stack[++top] = left;
+	stack[++top] = right;
+	while (top >= 0) {
+		// Pop h and l 
+		right = stack[top--];
+		left = stack[top--];
+
+		// Set pivot element at its correct position 
+		// in sorted array 
+		// select a pivotIndex between left and right --> CHANGE TO MEDIAN OF THREE
+		int pivot_index = left + rand() % (right - left + 1);
+
+		pivot_index = Partition(left, right, pivot_index);
+
+		// If there are elements on left side of pivot, 
+		// then push left side to stack 
+		if (pivot_index - 1 > left) {
+			stack[++top] = left;
+			stack[++top] = pivot_index - 1;
+		}
+
+		// If there are elements on right side of pivot, 
+		// then push right side to stack 
+		if (pivot_index + 1 < right) {
+			stack[++top] = pivot_index + 1;
+			stack[++top] = right;
+		}
+	}
+	//end algo, assign new array & pointers
+	array = temp_array;
+	front.index = 0;
+	front.ptr = array;
+	back.index = 0;
+	back.index += (size - 1);
+	back.ptr = array;
+	back.ptr += (size - 1);
+	ordered = true;
+	printArray();
+	printFrontBack();
+	cout << "quicksortinggg..." << endl;
 }
 
 
 template <typename T>
 void CDA<T>::printArray() {
-	cout << "[";
+	/*cout << "[";
 	for (int i = 0; i < capacity; i++) {
 		cout << array[i];
 		if (i < capacity - 1)
 			cout << ", ";
 	}
-	cout <<  "]" << endl;
+	cout <<  "]" << endl;*/
 }
 
 template <typename T>
 void CDA<T>::printFrontBack() {
-	cout << "HEAD: " << *front.ptr << endl;
-	cout << "BACK: " << *back.ptr << endl;
-	cout << "head index: " << front.index << endl;
-	cout << "back index: " << back.index << endl;
+	//cout << "HEAD: " << *front.ptr << endl;
+	//cout << "BACK: " << *back.ptr << endl;
+	//cout << "head index: " << front.index << endl;
+	//cout << "back index: " << back.index << endl;
 }
 
 template <typename T>
@@ -448,6 +554,60 @@ T CDA<T>::Search(T e) {
 		}
 	}
 	return -1;
+}
+
+template <typename T>
+void CDA<T>::CountingSort(int m) {
+	temp_array = new T[Length()]{};
+
+	for (int i = 0; i < Length(); i++) {
+		if (front.index == 0) {
+			temp_array[i] = array[front.index + i];
+		}
+		else if (back.index < front.index) {
+			temp_array[i] = array[(front.index + i) % capacity];
+		}
+		else {
+			temp_array[i] = array[(front.index + i)];
+		}
+	}
+	//algo begins
+	int *output = new int[Length()];
+	int *count = new int[Length()];
+	int max = temp_array[0];
+	for (int i = 1; i < m; i++)
+	{
+		if (temp_array[i] > max)
+			max = temp_array[i];
+	}
+	for (int i = 0; i <= max; ++i)
+	{
+		count[i] = 0;
+	}
+	for (int i = 0; i < size; i++)
+	{
+		count[temp_array[i]]++;
+	}
+	for (int i = 1; i <= max; i++)
+	{
+		count[i] += count[i - 1];
+	}
+	for (int i = size - 1; i >= 0; i--)
+	{
+		output[count[temp_array[i]] - 1] = temp_array[i];
+		count[temp_array[i]]--;
+	}
+	for (int i = 0; i < size; i++)
+	{
+		temp_array[i] = output[i];
+	}
+	array = temp_array;
+	front.index = 0;
+	front.ptr = array;
+	back.index = 0;
+	back.index += (size - 1);
+	back.ptr = array;
+	back.ptr += (size - 1);
 }
 
 template <typename T>
