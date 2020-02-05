@@ -15,6 +15,7 @@ void foo(CDA<int> x) {
 	}
 	cout << "SetOrdered in foo is " << x.SetOrdered() << endl;
 	// x => "5 6 7 8 9 1 1 2 3 4 10" SetOrdered => -1	
+	for (int i = 0; i < x.Length(); i++) cout << x[i] << " ";  cout << endl;
 }
 
 int main()
