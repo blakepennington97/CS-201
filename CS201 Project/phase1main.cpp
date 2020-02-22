@@ -3,8 +3,8 @@
 
 #include <iostream>
 #include <stdio.h>
-#include "circularDynamicArray.h"
-#include "circularDynamicArray.cpp"
+#include <random>
+#include "CDA.cpp"
 using namespace std;
 
 void foo(CDA<int> x) {
