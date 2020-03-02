@@ -9,8 +9,11 @@ int main() {
     tree.insert('B', 2);
     tree.insert('C', 3);
     tree.insert('D', 4);
+    tree.insert('E', 6);
+    tree.insert('F', 10);
 
     tree.printTree();
+    tree.preorder();
 
     return 0;
 }
