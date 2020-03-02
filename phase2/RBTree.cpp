@@ -122,6 +122,98 @@ private:
         root->color = 0;
     }
 
+    void rbTransplant(Node* u, Node* v)
+    {
+        if (u->parent == nullptr)
+        {
+            root = v;
+        }
+        else if (u == u->parent->left)
+        {
+            u->parent->left = v;
+        }
+        else
+        {
+            u->parent->right = v;
+        }
+        v->parent = u->parent;
+    }
+
+    void deleteFix(Node* x)
+    {
+        Node* s;
+        while (x != root && x->color == 0)
+        {
+            if (x == x->parent->left)
+            {
+                s = x->parent->right;
+                if (s->color == 1)
+                {
+                    s->color = 0;
+                    x->parent->color = 1;
+                    leftRotate(x->parent);
+                    s = x->parent->right;
+                }
+
+                if (s->left->color == 0 && s->right->color == 0)
+                {
+                    s->color = 1;
+                    x = x->parent;
+                }
+                else
+                {
+                    if (s->right->color == 0)
+                    {
+                        s->left->color = 0;
+                        s->color = 1;
+                        rightRotate(s);
+                        s = x->parent->right;
+                    }
+
+                    s->color = x->parent->color;
+                    x->parent->color = 0;
+                    s->right->color = 0;
+                    leftRotate(x->parent);
+                    x = root;
+                }
+            }
+            else
+            {
+                s = x->parent->left;
+                if (s->color == 1)
+                {
+                    s->color = 0;
+                    x->parent->color = 1;
+                    rightRotate(x->parent);
+                    s = x->parent->left;
+                }
+
+                if (s->right->color == 0 && s->right->color == 0)
+                {
+                    s->color = 1;
+                    x = x->parent;
+                }
+                else
+                {
+                    if (s->left->color == 0)
+                    {
+                        s->right->color = 0;
+                        s->color = 1;
+                        leftRotate(s);
+                        s = x->parent->left;
+                    }
+
+                    s->color = x->parent->color;
+                    x->parent->color = 0;
+                    s->left->color = 0;
+                    rightRotate(x->parent);
+                    x = root;
+                }
+            }
+        }
+        x->color = 0;
+    }
+
     void printHelper(Node* root, string indent, bool last)
     {
         if (root != pit)
@@ -152,12 +244,56 @@ public:
         pit->right = NULL;
         root = pit;
     }
+
+    void preorder() {
+        Node* temp_root = this->root;
+        Node* current;
+        Node* pre;
+
+        if (root == pit)
+            return;
+
+        current = root;
+        while (current != pit) {
+
+            if (current->left == pit) {
+                cout << current->key << " ";
+                current = current->right;
+            }
+            else {
+
+                pre = current->left;
+                while (pre->right != pit && pre->right != current)
+                    pre = pre->right;
+
+                if (pre->right == pit) {
+                    pre->right = current;
+                    current = current->left;
+                }
+
+                else {
+                    pre->right = pit;
+                    printf("%d ", current->key);
+                    current = current->right;
+                }
+            }
+        }
+    }
     void printTree()
     {
         if (root)
         {
             printHelper(this->root, "", true);
         }
+    }
+
+    Node* minimum(Node* node)
+    {
+        while (node->left != pit)
+        {
+            node = node->left;
+        }
+        return node;
     }
 
     void insert(char k, int v) {
@@ -203,6 +339,75 @@ public:
         }
 
         insertFix(node);
+    }
+
+    int remove(char k) {
+        Node* z = pit;
+        Node* node = this->root;
+        Node* x;
+        Node* y;
+        while (node != pit)
+        {
+            if (node->key == k)
+            {
+                z = node;
+            }
+
+            if (node->key <= k)
+            {
+                node = node->right;
+            }
+            else
+            {
+                node = node->left;
+            }
+        }
+
+        if (z == pit)
+        {
+            cout << "Key not found in the tree" << endl;
+            return 0;
+        }
+
+        y = z;
+        int y_original_color = y->color;
+        if (z->left == pit)
+        {
+            x = z->right;
+            rbTransplant(z, z->right);
+        }
+        else if (z->right == pit)
+        {
+            x = z->left;
+            rbTransplant(z, z->left);
+        }
+        else
+        {
+            y = minimum(z->right);
+            y_original_color = y->color;
+            x = y->right;
+            if (y->parent == z)
+            {
+                x->parent = y;
+            }
+            else
+            {
+                rbTransplant(y, y->right);
+                y->right = z->right;
+                y->right->parent = y;
+            }
+
+            rbTransplant(z, y);
+            y->left = z->left;
+            y->left->parent = y;
+            y->color = z->color;
+        }
+        delete z;
+        if (y_original_color == 0)
+        {
+            deleteFix(x);
+        }
+        return 1;
     }
 
 };
