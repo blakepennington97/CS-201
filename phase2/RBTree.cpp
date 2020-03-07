@@ -480,21 +480,71 @@ public:
     }
 
     int rank(char k) {
+        Node* temp = root;
+        int r;
+        if (temp->left != pit) {
+            r = temp->left->node_size + 1;
+        }
+        else {
+            r = 1;
+        }
 
-        return 0;
+        while (temp->key != k) {
+            if (temp != pit) {
+                //go to left tree
+                if (temp->key > k) {
+                    temp = temp->left;
+                    if (temp->right != pit) {
+                        r -= temp->right->node_size + 1;
+                    }
+                    else {
+                        r -= 1;
+                    }
+                }
+                //else go to right tree
+                else {
+                    temp = temp->right;
+                    if (temp->left != pit) {
+                        r += temp->left->node_size + 1;
+                    }
+                    else {
+                        r += 1;
+                    }
+                }
+
+                //not found
+                if (temp == pit) {
+                    return 0;
+                }
+            }
+        }
+
+        return r;
     }
 
     char select(int pos) {
         Node* temp = root;
+
         while (temp != pit) {
-            if (pos == temp->node_size - temp->right->node_size) {
+            int r;
+            if (temp->left != pit) {
+                r = temp->left->node_size + 1;
+            }
+            else {
+                r = 1;
+            }
+            if (pos == r) {
                 return temp->key;
             }
-            else if (pos < temp->node_size - temp->right->node_size) {
+            else if (pos < r) {
                 temp = temp->left;
             }
-            //IF i > r THEN Return Select(right(x), i−r)
+            else if (pos > r) {
+                temp = temp->right;
+                pos -= r;
+            }
         }
+        return 0;
     }
 
     int size() {
