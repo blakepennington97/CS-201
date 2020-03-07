@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stack>
 using namespace std;
 
 struct Node
@@ -6,6 +7,7 @@ struct Node
     char key;
     int value;
     int color; //0 = black, 1 = red
+    int node_size;
     Node* parent;
     Node* left;
     Node* right;
@@ -16,6 +18,7 @@ class RBTree {
 private:
     Node* root;
     Node* pit;
+    int tree_size;
 
     void leftRotate(Node* x)
     {
@@ -188,7 +191,7 @@ private:
                     s = x->parent->left;
                 }
 
-                if (s->right->color == 0 && s->right->color == 0)
+                if (s->right->color == 0)
                 {
                     s->color = 1;
                     x = x->parent;
@@ -214,6 +217,22 @@ private:
         x->color = 0;
     }
 
+    int subtree_size(Node* node) {
+        if (node == NULL) {
+            return 0;
+        }
+        else {
+            node->node_size = 1;
+        }
+        if (node->left != pit) {
+            node->node_size += subtree_size(node->left);
+        }
+        if (node->right != pit) {
+            node->node_size += subtree_size(node->right);
+        }
+        return node->node_size;
+    }
+
     void printHelper(Node* root, string indent, bool last)
     {
         if (root != pit)
@@ -231,7 +250,7 @@ private:
             }
 
             string sColor = root->color ? "RED" : "BLACK";
-            cout << root->value << " " << root->key << "(" << sColor << ")" << endl;
+            cout << root->value << " " << root->key << "(" << sColor << ")" << "(" << root->node_size << ")" << endl;
             printHelper(root->left, indent, false);
             printHelper(root->right, indent, true);
         }
@@ -243,42 +262,60 @@ public:
         pit->left = NULL;
         pit->right = NULL;
         root = pit;
+        tree_size = 0;
     }
 
     void preorder() {
-        Node* temp_root = this->root;
-        Node* current;
-        Node* pre;
-
-        if (root == pit)
-            return;
-
-        current = root;
-        while (current != pit) {
-
-            if (current->left == pit) {
-                cout << current->key << " ";
-                current = current->right;
-            }
-            else {
-
-                pre = current->left;
-                while (pre->right != pit && pre->right != current)
-                    pre = pre->right;
-
-                if (pre->right == pit) {
-                    pre->right = current;
-                    current = current->left;
-                }
-
-                else {
-                    pre->right = pit;
-                    printf("%d ", current->key);
-                    current = current->right;
-                }
-            }
+        if (root == pit) {
+            cout << "";
+        }
+        else {
+            preorder(root);
         }
     }
+
+    void preorder(Node* tree)const {
+        if (tree != pit) {
+            cout << tree->key << " ";
+            preorder(tree->left);
+            preorder(tree->right);
+        }
+    }
+    
+    void inorder() {
+        if (root == pit) {
+            cout << "";
+        }
+        else {
+            inorder(root);
+        }
+    }
+    
+    void inorder(Node* tree)const {
+        if (tree != pit) {
+            inorder(tree->left);
+            cout << tree->key << " ";
+            inorder(tree->right);
+        }
+    }
+    
+    void postorder() {
+        if (root == pit) {
+            cout << "";
+        }
+        else {
+            postorder(root);
+        }
+    }
+    
+    void postorder(Node* tree)const {
+        if (tree != pit) {
+            postorder(tree->left);
+            postorder(tree->right);
+            cout << tree->key << " ";
+        }
+    }
+
     void printTree()
     {
         if (root)
@@ -297,6 +334,8 @@ public:
     }
 
     void insert(char k, int v) {
+        cout << "inserting " << k << endl;
+        tree_size++;
         Node* node = new Node;
         node->parent = NULL;
         node->left = pit;
@@ -307,10 +346,11 @@ public:
 
         Node* y = NULL;
         Node* x = this->root;
+        int size = 0;
 
         while (x != pit) {
             y = x;
-            if (node->value < x->value) {
+            if (node->key < x->key) {
                 x = x->left;
             }
             else {
@@ -319,15 +359,18 @@ public:
         }
 
         node->parent = y;
-        if (y == nullptr) {
+        if (y == NULL) {
             root = node;
         }
-        else if (node->value < y->value) {
+        else if (node->key < y->key) {
             y->left = node;
         }
         else {
             y->right = node;
         }
+
+        subtree_size(this->root);
+        cout << "node_size = " << root->node_size << endl;
 
         //recoloring stage
         if (node->parent == NULL) {
@@ -342,6 +385,7 @@ public:
     }
 
     int remove(char k) {
+        tree_size--;
         Node* z = pit;
         Node* node = this->root;
         Node* x;
@@ -409,5 +453,52 @@ public:
         }
         return 1;
     }
+
+    int* search(char k) {
+        Node* current = this->root;
+
+        while (current->key != k) {
+
+            if (current != pit) {
+                //go to left tree
+                if (current->key > k) {
+                    current = current->left;
+                }  
+                //else go to right tree
+                else {
+                    current = current->right;
+                }
+
+                //not found
+                if (current == pit) {
+                    return NULL;
+                }
+            }
+        }
+
+        return &current->value;
+    }
+
+    int rank(char k) {
+
+        return 0;
+    }
+
+    char select(int pos) {
+        Node* temp = root;
+        while (temp != pit) {
+            if (pos == temp->node_size - temp->right->node_size) {
+                return temp->key;
+            }
+            else if (pos < temp->node_size - temp->right->node_size) {
+                temp = temp->left;
+            }
+            //IF i > r THEN Return Select(right(x), i−r)
+        }
+    }
+
+    int size() {
+        return tree_size;
+    }  
 
 };
