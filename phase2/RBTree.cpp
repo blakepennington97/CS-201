@@ -265,6 +265,19 @@ public:
         tree_size = 0;
     }
 
+    RBTree(char k[], int v[], int s) {
+        pit = new Node;
+        pit->color = 0;
+        pit->left = NULL;
+        pit->right = NULL;
+        root = pit;
+        tree_size = 0;
+
+        for (int i = 0; s != 0; s--, i++) {
+            insert(k[i], v[i]);
+        }
+    }
+
     void preorder() {
         if (root == pit) {
             cout << "";
@@ -334,7 +347,7 @@ public:
     }
 
     void insert(char k, int v) {
-        cout << "inserting " << k << endl;
+        //cout << "inserting " << k << endl;
         tree_size++;
         Node* node = new Node;
         node->parent = NULL;
@@ -370,7 +383,7 @@ public:
         }
 
         subtree_size(this->root);
-        cout << "node_size = " << root->node_size << endl;
+        //cout << "node_size = " << root->node_size << endl;
 
         //recoloring stage
         if (node->parent == NULL) {
@@ -545,6 +558,119 @@ public:
             }
         }
         return 0;
+    }
+
+    char* predecessor(char k) {
+        Node* current = root;
+        bool go_right = false;
+        bool go_left = false;
+
+        while (current->key != k) {
+
+            if (current != pit) {
+                //go to left tree
+                if (current->key > k) {
+                    current = current->left;
+                    go_left = true;
+                }
+                //else go to right tree
+                else {
+                    current = current->right;
+                    go_right = true;
+                }
+
+                //not found
+                if (current == pit) {
+                    return NULL;
+                }
+            }
+        }
+        //now we're at the key we want, now go left once, then right right right
+        if (current->left != pit) {
+            current = current->left;
+        }
+        //if leaf
+        else if (current->left == pit && current->right == pit) {
+            //if right child
+            if (current->parent->key < current->key) {
+                return &current->parent->key;
+            }
+            //if left child
+            else if (current->parent->key > current->key) {
+                if (go_right == false) {
+                    cout << "no predecessor exists" << endl;
+                    char x = NULL;
+                    return &x;
+                }
+                else {
+                    return &current->parent->parent->key;
+                }
+            }
+        }
+        else if (current->left == pit && current->right != pit) {
+            return &current->parent->key;
+        }
+        while (current->right != pit) {
+            current = current->right;
+            go_right = true;
+        }
+        return &current->key;
+    }
+
+    char* successor(char k) {
+        Node* current = root;
+        bool go_right = false;
+        bool go_left = false;
+
+        while (current->key != k) {
+
+            if (current != pit) {
+                //go to left tree
+                if (current->key > k) {
+                    current = current->left;
+                    go_left = true;
+                }
+                //else go to right tree
+                else {
+                    current = current->right;
+                    go_right = true;
+                }
+
+                //not found
+                if (current == pit) {
+                    return NULL;
+                }
+            }
+        }
+        //now we're at the key we want, now go right once, then left left left
+        if (current->right != pit) {
+            current = current->right;
+        }
+        //if leaf
+        else if (current->left == pit && current->right == pit) {
+            //if right child
+            if (current->parent->key < current->key) {
+                if (go_left == false) {
+                    cout << "no successor exists" << endl;
+                    char x = NULL;
+                    return &x;
+                }
+                else {
+                    return &current->parent->parent->key;
+                }
+            }
+            //if left child
+            else if (current->parent->key > current->key) {
+                    return &current->parent->key;
+            }
+        }
+        else if (current->right == pit && current->left != pit) {
+            return &current->parent->key;
+        }
+        while (current->left != pit) {
+            current = current->left;
+        }
+        return &current->key;
     }
 
     int size() {
