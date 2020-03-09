@@ -464,6 +464,7 @@ public:
         {
             deleteFix(x);
         }
+        subtree_size(this->root);
         return 1;
     }
 
