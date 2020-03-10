@@ -2,10 +2,10 @@
 #include <stack>
 using namespace std;
 
-struct Node
-{
-    char key;
-    int value;
+template <typename T, typename T2>
+struct Node {
+    T key;
+    T2 value;
     int color; //0 = black, 1 = red
     int node_size;
     Node* parent;
@@ -14,15 +14,16 @@ struct Node
 };
 
 
+template <typename T, typename T2>
 class RBTree {
 private:
-    Node* root;
-    Node* pit;
+    Node<T, T2>* root;
+    Node<T, T2>* pit;
     int tree_size;
 
-    void leftRotate(Node* x)
+    void leftRotate(Node<T, T2>* x)
     {
-        Node* y = x->right;
+        Node<T, T2>* y = x->right;
         x->right = y->left;
         if (y->left != pit)
         {
@@ -45,8 +46,8 @@ private:
         x->parent = y;
     }
 
-    void rightRotate(Node* x) {
-        Node* y = x->left;
+    void rightRotate(Node<T, T2>* x) {
+        Node<T, T2>* y = x->left;
         x->left = y->right;
         if (y->right != pit)
         {
@@ -68,8 +69,8 @@ private:
         y->right = x;
         x->parent = y;
     }
-    void insertFix(Node* k) {
-        Node* u;
+    void insertFix(Node<T, T2>* k) {
+        Node<T, T2>* u;
         while (k->parent->color == 1)
         {
             if (k->parent == k->parent->parent->right)
@@ -125,7 +126,7 @@ private:
         root->color = 0;
     }
 
-    void rbTransplant(Node* u, Node* v)
+    void rbTransplant(Node<T, T2>* u, Node<T, T2>* v)
     {
         if (u->parent == nullptr)
         {
@@ -142,9 +143,9 @@ private:
         v->parent = u->parent;
     }
 
-    void deleteFix(Node* x)
+    void deleteFix(Node<T, T2>* x)
     {
-        Node* s;
+        Node<T, T2>* s;
         while (x != root && x->color == 0)
         {
             if (x == x->parent->left)
@@ -217,7 +218,7 @@ private:
         x->color = 0;
     }
 
-    int subtree_size(Node* node) {
+    int subtree_size(Node<T, T2>* node) {
         if (node == NULL) {
             return 0;
         }
@@ -233,7 +234,7 @@ private:
         return node->node_size;
     }
 
-    void printHelper(Node* root, string indent, bool last)
+    void printHelper(Node<T, T2>* root, string indent, bool last)
     {
         if (root != pit)
         {
@@ -257,7 +258,7 @@ private:
     }
 public:
     RBTree() {
-        pit = new Node;
+        pit = new Node <T, T2>;
         pit->color = 0;
         pit->left = NULL;
         pit->right = NULL;
@@ -265,8 +266,8 @@ public:
         tree_size = 0;
     }
 
-    RBTree(char k[], int v[], int s) {
-        pit = new Node;
+    RBTree<T,T2> (T k[], T2 v[], int s) {
+        pit = new Node <T, T2>;
         pit->color = 0;
         pit->left = NULL;
         pit->right = NULL;
@@ -278,6 +279,11 @@ public:
         }
     }
 
+    ~RBTree() {
+        delete(root);
+        //need to delete all nodes connected to root as well
+    }
+
     void preorder() {
         if (root == pit) {
             cout << "";
@@ -287,7 +293,7 @@ public:
         }
     }
 
-    void preorder(Node* tree)const {
+    void preorder(Node<T, T2>* tree)const {
         if (tree != pit) {
             cout << tree->key << " ";
             preorder(tree->left);
@@ -304,7 +310,7 @@ public:
         }
     }
     
-    void inorder(Node* tree)const {
+    void inorder(Node<T, T2>* tree)const {
         if (tree != pit) {
             inorder(tree->left);
             cout << tree->key << " ";
@@ -321,7 +327,7 @@ public:
         }
     }
     
-    void postorder(Node* tree)const {
+    void postorder(Node<T, T2>* tree)const {
         if (tree != pit) {
             postorder(tree->left);
             postorder(tree->right);
@@ -337,7 +343,7 @@ public:
         }
     }
 
-    Node* minimum(Node* node)
+    Node<T, T2>* minimum(Node<T, T2>* node)
     {
         while (node->left != pit)
         {
@@ -346,10 +352,10 @@ public:
         return node;
     }
 
-    void insert(char k, int v) {
+    void insert(T k, T2 v) {
         //cout << "inserting " << k << endl;
         tree_size++;
-        Node* node = new Node;
+        Node<T, T2>* node = new Node <T, T2>;
         node->parent = NULL;
         node->left = pit;
         node->right = pit;
@@ -357,8 +363,8 @@ public:
         node->value = v;
         node->color = 1;
 
-        Node* y = NULL;
-        Node* x = this->root;
+        Node<T, T2>* y = NULL;
+        Node<T, T2>* x = this->root;
         int size = 0;
 
         while (x != pit) {
@@ -397,12 +403,12 @@ public:
         insertFix(node);
     }
 
-    int remove(char k) {
+    int remove(T k) {
         tree_size--;
-        Node* z = pit;
-        Node* node = this->root;
-        Node* x;
-        Node* y;
+        Node<T, T2>* z = pit;
+        Node<T, T2>* node = this->root;
+        Node<T, T2>* x;
+        Node<T, T2>* y;
         while (node != pit)
         {
             if (node->key == k)
@@ -422,7 +428,7 @@ public:
 
         if (z == pit)
         {
-            cout << "Key not found in the tree" << endl;
+            //cout << "Key not found in the tree" << endl;
             return 0;
         }
 
@@ -468,8 +474,8 @@ public:
         return 1;
     }
 
-    int* search(char k) {
-        Node* current = this->root;
+    T2* search(T k) {
+        Node<T, T2>* current = this->root;
 
         while (current->key != k) {
 
@@ -493,8 +499,8 @@ public:
         return &current->value;
     }
 
-    int rank(char k) {
-        Node* temp = root;
+    int rank(T k) {
+        Node<T, T2>* temp = root;
         int r;
         if (temp->left != pit) {
             r = temp->left->node_size + 1;
@@ -536,8 +542,8 @@ public:
         return r;
     }
 
-    char select(int pos) {
-        Node* temp = root;
+    T select(int pos) {
+        Node<T, T2>* temp = root;
 
         while (temp != pit) {
             int r;
@@ -561,8 +567,8 @@ public:
         return 0;
     }
 
-    char* predecessor(char k) {
-        Node* current = root;
+    T* predecessor(T k) {
+        Node<T, T2>* current = root;
         bool go_right = false;
         bool go_left = false;
 
@@ -599,8 +605,7 @@ public:
             //if left child
             else if (current->parent->key > current->key) {
                 if (go_right == false) {
-                    cout << "no predecessor exists" << endl;
-                    char x = NULL;
+                    T x = NULL;
                     return &x;
                 }
                 else {
@@ -618,8 +623,8 @@ public:
         return &current->key;
     }
 
-    char* successor(char k) {
-        Node* current = root;
+    T* successor(T k) {
+        Node<T, T2>* current = root;
         bool go_right = false;
         bool go_left = false;
 
@@ -652,8 +657,7 @@ public:
             //if right child
             if (current->parent->key < current->key) {
                 if (go_left == false) {
-                    cout << "no successor exists" << endl;
-                    char x = NULL;
+                    T x = NULL;
                     return &x;
                 }
                 else {
