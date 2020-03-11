@@ -260,21 +260,36 @@ private:
         }
     }
 
-    /*Node<T,T2>* copyHelper(Node<T, T2>* new_root, Node<T, T2>* old_root) {
-        if (old_root != pit) {
-            if (old_root->left != pit) {
-                new_root->right = old_root->left;
-            }
-            if (old_root->right != pit) {
-                new_root->right = old_root->right;
-            }
-            copyHelper(new_root->left, old_root->left);
-            copyHelper(new_root->right, old_root->right);
-        }
-        else {
-            return new_root;
-        }
-    }*/
+    //Node<T,T2>* copyHelper(Node<T, T2>* new_root, Node<T, T2>* old_root, bool direction) {
+    //    //copy all the way down past pit, stopping at NULL
+    //    if (old_root != NULL) {
+    //        //TODO: create some kind of new node here
+    //        //if left
+    //        if (direction) {
+    //            Node<T, T2>* node = new Node <T, T2>;
+    //            node->color = old_root->color;
+    //            node->key = old_root->key;
+    //            node->value = old_root->value;
+    //            node->node_size = old_root->node_size;
+    //            new_root = node;
+    //            new_root->
+    //        }
+    //        /*if (old_root->right != NULL) {
+    //            Node<T, T2>* node = new Node <T, T2>;
+    //            node->color = old_root->right->color;
+    //            node->key = old_root->right->key;
+    //            node->value = old_root->right->value;
+    //            node->node_size = old_root->right->node_size;
+    //            new_root->right = node;
+    //        }*/
+    //        copyHelper(new_root->left, old_root->left);
+    //        copyHelper(new_root->right, old_root->right);
+    //    }
+    //    else {
+    //        return new_root;
+    //    }
+    //    return new_root;
+    //}
     
 public:
     RBTree() {
@@ -300,18 +315,22 @@ public:
     }
 
     //copy constructor
-    RBTree(RBTree<T, T2>& t) {
-        pit = new Node <T, T2>;
-        root = new Node <T, T2>;
-        pit = t.pit;
-        *root = *t.root;
-        tree_size = t.tree_size;
-    }
+    //RBTree(RBTree<T, T2>& t) {
+    //    pit = new Node <T, T2>;
+    //    pit->color = 0;
+    //    pit->left = NULL;
+    //    pit->right = NULL;
+    //    tree_size = 0;
 
-    //copy assignment operator
-    RBTree& operator = (const RBTree& t) {
-        return *this;
-    }
+    //    root = new Node <T, T2>;
+    //    //now assign root to recursion
+    //    root = copyHelper(root, t.root);
+    //}
+
+    ////copy assignment operator
+    //RBTree& operator = (const RBTree& t) {
+    //    return *this;
+    //}
 
 
 
