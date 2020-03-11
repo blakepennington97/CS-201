@@ -44,6 +44,7 @@ private:
         }
         y->left = x;
         x->parent = y;
+        subtree_size(y);
     }
 
     void rightRotate(Node<T, T2>* x) {
@@ -68,6 +69,7 @@ private:
         }
         y->right = x;
         x->parent = y;
+        subtree_size(y);
     }
     void insertFix(Node<T, T2>* k) {
         Node<T, T2>* u;
@@ -120,6 +122,7 @@ private:
             }
             if (k == root)
             {
+                subtree_size(root);
                 break;
             }
         }
@@ -256,6 +259,23 @@ private:
             printHelper(root->right, indent, true);
         }
     }
+
+    /*Node<T,T2>* copyHelper(Node<T, T2>* new_root, Node<T, T2>* old_root) {
+        if (old_root != pit) {
+            if (old_root->left != pit) {
+                new_root->right = old_root->left;
+            }
+            if (old_root->right != pit) {
+                new_root->right = old_root->right;
+            }
+            copyHelper(new_root->left, old_root->left);
+            copyHelper(new_root->right, old_root->right);
+        }
+        else {
+            return new_root;
+        }
+    }*/
+    
 public:
     RBTree() {
         pit = new Node <T, T2>;
@@ -279,6 +299,22 @@ public:
         }
     }
 
+    //copy constructor
+    RBTree(RBTree<T, T2>& t) {
+        pit = new Node <T, T2>;
+        root = new Node <T, T2>;
+        pit = t.pit;
+        *root = *t.root;
+        tree_size = t.tree_size;
+    }
+
+    //copy assignment operator
+    RBTree& operator = (const RBTree& t) {
+        return *this;
+    }
+
+
+
     ~RBTree() {
         delete(root);
         //need to delete all nodes connected to root as well
@@ -286,10 +322,11 @@ public:
 
     void preorder() {
         if (root == pit) {
-            cout << "";
+            cout << endl;
         }
         else {
             preorder(root);
+            cout << endl;
         }
     }
 
@@ -303,10 +340,11 @@ public:
     
     void inorder() {
         if (root == pit) {
-            cout << "";
+            cout << endl;
         }
         else {
             inorder(root);
+            cout << endl;
         }
     }
     
@@ -320,10 +358,11 @@ public:
     
     void postorder() {
         if (root == pit) {
-            cout << "";
+            cout << endl;
         }
         else {
             postorder(root);
+            cout << endl;
         }
     }
     
@@ -388,15 +427,16 @@ public:
             y->right = node;
         }
 
-        subtree_size(this->root);
         //cout << "node_size = " << root->node_size << endl;
 
         //recoloring stage
         if (node->parent == NULL) {
             node->color = 0; //set to black
+            subtree_size(node);
             return;
         }
         if (node->parent->parent == NULL) {
+            subtree_size(node);
             return;
         }
 
@@ -502,6 +542,7 @@ public:
     int rank(T k) {
         Node<T, T2>* temp = root;
         int r;
+        //subtree_size(temp);
         if (temp->left != pit) {
             r = temp->left->node_size + 1;
         }
