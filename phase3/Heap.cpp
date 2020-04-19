@@ -43,18 +43,18 @@ private:
 		*y = temp;
 	}
 
-	void heapify(CDA<Node<T, T2>> arr, int i) {
+	void heapify(int i) {
 		int left = leftChild(i);
 		int right = rightChild(i);
 		int smallest = i;
 
 		// check if the left node is smaller than the current node
-		if (left <= size && arr[left].key < arr[smallest].key) {
+		if (left < size && arr[left].key < arr[smallest].key) {
 			smallest = left;
 		}
 
 		// check if the right node is smaller than the current node & left node 
-		if (right <= size && arr[right].key < arr[smallest].key) {
+		if (right < size && arr[right].key < arr[smallest].key) {
 			smallest = right;
 		}
 
@@ -63,7 +63,7 @@ private:
 			Node<T, T2> temp = arr[i];
 			arr[i] = arr[smallest];
 			arr[smallest] = temp;
-			heapify(arr, smallest);
+			heapify(smallest);
 			//Node<T, T2> temp; //Node<T, T2> temp = arr[i];
 			//Node<T, T2> temp2; //Node<T, T2> temp = arr[i];
 			//temp.index = smallest; //arr[i] = arr[smallest];
@@ -94,11 +94,11 @@ public:
 			temp.key = k[i];
 			temp.value = v[i];
 			arr.AddEnd(temp);
-			cout << i << endl;
+			//cout << i << endl;
 		}
 
-		for (int i = start / 2; i >= 0; i--) {
-			heapify(arr, i);
+		for (int i = start; i >= 0; i--) {
+			heapify(i);
 		}
 
 		//void buildHeap(int arr[], int n)
