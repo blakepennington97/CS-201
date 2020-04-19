@@ -37,8 +37,9 @@ private:
 	}
 
 	//helper function to assist insertion
-	void swap(T* x, T* y) {
-		T temp = *x;
+	template <typename any>
+	void swap(any* x, any* y) {
+		any temp = *x;
 		*x = *y;
 		*y = temp;
 	}
@@ -142,9 +143,9 @@ public:
 	void insert(T k, T2 v) {
 		//first insert a last position in array
 		Node<T, T2> new_node;
-		new_node.index = 0;
-		new_node.key = 0;
-		new_node.value = 0;
+		//new_node.index = 0;
+		//new_node.key = 0;
+		//new_node.value = 0;
 
 		new_node.key = k;
 		new_node.value = v;
@@ -156,8 +157,8 @@ public:
 		//bubble up until heap property satisfied
 		int i = size - 1;
 		while (i != 0 && ( arr[parent(i)].key > arr[i].key) ) { //heap[BinaryHeap::parent(i)] < heap[i]
-			swap( &(arr[parent(i)].key), &(arr[i].key) ); //swap(&heap[BinaryHeap::parent(i)], &heap[i]);
-			swap( &(arr[parent(i)].value), &(arr[i].value) ); //swap(&heap[BinaryHeap::parent(i)], &heap[i]);
+			swap<T>( &(arr[parent(i)].key), &(arr[i].key) ); //swap(&heap[BinaryHeap::parent(i)], &heap[i]);
+			swap<T2>( &(arr[parent(i)].value), &(arr[i].value) ); //swap(&heap[BinaryHeap::parent(i)], &heap[i]);
 			//ANOTHER SWAP VALUE HERE?
 			i = parent(i); //i = BinaryHeap::parent(i);
 		}
