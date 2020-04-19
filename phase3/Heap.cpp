@@ -43,28 +43,82 @@ private:
 		*y = temp;
 	}
 
-	
+	void heapify(T *k, T2 *v, int i) {
+		int left = leftChild(i);
+		int right = rightChild(i);
+		int smallest = i;
+
+		// check if the left node is smaller than the current node
+		if (left <= size && arr[left].key < arr[smallest].key) {
+			smallest = left;
+		}
+
+		// check if the right node is smaller than the current node & left node 
+		if (right <= size && arr[right].key < arr[smallest].key) {
+			smallest = right;
+		}
+
+		// swap the largest node with the current node, repeat this process until the current node is larger than the right and left node
+		if (smallest != i) {
+			Node<T, T2> temp = arr[i];
+			arr[i] = arr[smallest];
+			arr[smallest] = temp;
+			heapify(arr, smallest);
+		}
+
+	}
+
 public:
 	Heap() {
-		//arr = new Node<T, T2>;
 		size = 0;
-		//capacity = 1;
 	}
-	Heap(T k, T2 V, int s) {
+
+	Heap(T *k, T2 *V, int s) {
+		int start = (s / 2) - 1;
 		size = s;
+
+		for (int i = start / 2; i >= 0; i--) {
+			heapify(k, v, i);
+		}
+
+		//void buildHeap(int arr[], int n)
+		//{
+		//	// Index of last non-leaf node 
+		//	int startIdx = (n / 2) - 1;
+
+		//	// Perform reverse level order traversal 
+		//	// from last non-leaf node and heapify 
+		//	// each node 
+		//	for (int i = startIdx; i >= 0; i--) {
+		//		heapify(arr, n, i);
+		//	}
+		//}
 	}
+
 	~Heap() {
-
+		//delete(&arr);
 	}
+
 	T peekKey() {
-
+		return arr[0].key;
 	}
+
 	T2 peekValue() {
-
+		return arr[0].value;
 	}
+
 	T extractMin() {
+		Node<T, T2> minItem = arr[0];
 
+		// replace the first item with the last item
+		arr[0] = arr[size - 1];
+		size = size - 1;
+
+		// maintain the heap property by heapifying the first item
+		heapify(0);
+		return minItem.key;
 	}
+
 	void insert(T k, T2 v) {
 		//first insert a last position in array
 		Node<T, T2> new_node;
@@ -81,7 +135,7 @@ public:
 
 		//bubble up until heap property satisfied
 		int i = size - 1;
-		while (i != 0 && ( arr[parent(i)].key < arr[i].key) ) { //heap[BinaryHeap::parent(i)] < heap[i]
+		while (i != 0 && ( arr[parent(i)].key > arr[i].key) ) { //heap[BinaryHeap::parent(i)] < heap[i]
 			swap( &(arr[parent(i)].key), &(arr[i].key) ); //swap(&heap[BinaryHeap::parent(i)], &heap[i]);
 			swap( &(arr[parent(i)].value), &(arr[i].value) ); //swap(&heap[BinaryHeap::parent(i)], &heap[i]);
 			//ANOTHER SWAP VALUE HERE?
