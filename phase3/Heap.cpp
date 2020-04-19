@@ -1,8 +1,3 @@
-//This is a binary heap class
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-
 #include <iostream>
 #include "CDA.cpp"
 using namespace std;
@@ -117,24 +112,18 @@ public:
 	void insert(T k, T2 v) {
 		//first insert a last position in array
 		Node<T, T2> new_node;
-		//new_node.index = 0;
-		//new_node.key = 0;
-		//new_node.value = 0;
-
 		new_node.key = k;
 		new_node.value = v;
 		new_node.index = size;
-		//arr[size] = *new_node; //add to end of tree
 		arr.AddEnd(new_node);
 		size++;
 
 		//bubble up until heap property satisfied
 		int i = size - 1;
-		while (i != 0 && ( arr[parent(i)].key > arr[i].key) ) { //heap[BinaryHeap::parent(i)] < heap[i]
-			swap<T>( &(arr[parent(i)].key), &(arr[i].key) ); //swap(&heap[BinaryHeap::parent(i)], &heap[i]);
-			swap<T2>( &(arr[parent(i)].value), &(arr[i].value) ); //swap(&heap[BinaryHeap::parent(i)], &heap[i]);
-			//ANOTHER SWAP VALUE HERE?
-			i = parent(i); //i = BinaryHeap::parent(i);
+		while (i != 0 && ( arr[parent(i)].key > arr[i].key) ) { 
+			swap<T>( &(arr[parent(i)].key), &(arr[i].key) ); 
+			swap<T2>( &(arr[parent(i)].value), &(arr[i].value) ); 
+			i = parent(i); 
 		}
 
 
