@@ -19,7 +19,6 @@ class Heap {
 private:
 	int size;
  	CDA<Node<T, T2>> arr;
-	//Node <T, T2>* arr;
 
 	// return index of the parent node
 	int parent(int i) {
@@ -65,18 +64,6 @@ private:
 			arr[i] = arr[smallest];
 			arr[smallest] = temp;
 			heapify(smallest);
-			//Node<T, T2> temp; //Node<T, T2> temp = arr[i];
-			//Node<T, T2> temp2; //Node<T, T2> temp = arr[i];
-			//temp.index = smallest; //arr[i] = arr[smallest];
-			//temp.key = k[smallest];
-			//temp.value = v[smallest];
-			//arr[i] = temp;
-			//temp2.index = i; //arr[smallest] = temp;
-			//temp2.key = k[i];
-			//temp2.value = v[i];
-			//arr[smallest] = temp2;
-			//heapify(k, v, smallest);
-
 		}
 
 	}
@@ -95,29 +82,16 @@ public:
 			temp.key = k[i];
 			temp.value = v[i];
 			arr.AddEnd(temp);
-			//cout << i << endl;
 		}
 
 		for (int i = start; i >= 0; i--) {
 			heapify(i);
 		}
 
-		//void buildHeap(int arr[], int n)
-		//{
-		//	// Index of last non-leaf node 
-		//	int startIdx = (n / 2) - 1;
-
-		//	// Perform reverse level order traversal 
-		//	// from last non-leaf node and heapify 
-		//	// each node 
-		//	for (int i = startIdx; i >= 0; i--) {
-		//		heapify(arr, n, i);
-		//	}
-		//}
 	}
 
 	~Heap() {
-		//delete(&arr);
+		//delete(arr);
 	}
 
 	T peekKey() {
