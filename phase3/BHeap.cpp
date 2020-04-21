@@ -57,6 +57,7 @@ public:
 			if (temp->key < smallest) {
 				smallest = temp->key;
 			}
+			temp = temp->sibling;
 		}
 		return smallest;
 	}
@@ -64,7 +65,63 @@ public:
 
 	}
 	T extractMin() {
+		Node<T, T2>* current = head;
+		Node<T, T2>* prev_min = nullptr;
+		Node<T, T2>* min_ptr = nullptr;
+		Node<T, T2>* prev_ptr = nullptr;
+		T min = current->key;
+
+		while (current != nullptr) {
+			if (current->key <= min) {
+				min = current->key;
+				prev_min = prev_ptr;
+				min_ptr = current;
+			}
+			prev_ptr = current;
+			current = current->sibling;
+		}
+
+
+		//now delete
+		if (prev_min != nullptr && min_ptr->sibling != nullptr) {
+			prev_min->sibling = min_ptr->sibling;
+		}
+		else if (prev_min != nullptr && min_ptr->sibling == nullptr) {
+			prev_min->sibling = nullptr;
+		}
+
+		//remove parent ptr from all children
+		Node<T, T2>* child_ptr = min_ptr->child;
+		while (child_ptr != nullptr) {
+			child_ptr->parent = nullptr;
+			child_ptr = child_ptr->sibling;
+		}
+
+		//now reverse order
+		CDA<Node<T, T2>*> arr;
+		child_ptr = min_ptr->child;
+		while (child_ptr != nullptr) {
+			arr.AddEnd(child_ptr);
+			child_ptr = child_ptr->sibling;
+		}
+
+		current = arr[arr.Length() - 1];
+		Node<T, T2>* temp = current;
+		arr.DelEnd();
+
+		while (arr.Length() != 0) {
+			current->sibling = arr[arr.Length() - 1];
+			arr.DelEnd();
+			current = current->sibling;
+		}
+
+		current->sibling = nullptr;
+
+		BHeap<T, T2> heap;
+		heap.head = temp;
+		merge(heap);
 		size--;
+		return min_ptr->key;
 	}
 	void insert(T k, T2 v) {
 		BHeap new_heap;
