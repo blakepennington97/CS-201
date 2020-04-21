@@ -28,6 +28,7 @@ int main() {
 	////Should output 2 3 5 4 8 9 6 10 7
 
 	BHeap<string, int> X;
+	BHeap<string, int> Y;
 	X.insert("A", 10);
 	X.insert("B", 9);
 	X.insert("C", 8);
@@ -58,7 +59,7 @@ int main() {
 	//B3
 	//A E H I F C D B
 
-	/*cout << X.extractMin() << endl;
+	cout << X.extractMin() << endl;
 	//Should output A
 
 	X.printKey();
@@ -69,7 +70,7 @@ int main() {
 		//B3
 		//C E H I F J K D
 
-		Y.insert("M", 100);
+	Y.insert("M", 100);
 	Y.insert("O", 101);
 	Y.insert("G", 102);
 	Y.insert("N", 103);
@@ -97,6 +98,5 @@ int main() {
 	//
 	//B3
 	//C E H I F J K D
-	*/
 	return 0;
 }
