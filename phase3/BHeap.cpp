@@ -184,12 +184,31 @@ public:
 				arr.DelEnd(); //TODO: REMOVE ITEM HERE, DelFront or DelBack>?
 				cout << temp->key << " ";
 
-				//now traverse tree
+				//now traverse tree down
 				if (temp->child != nullptr) {
 					Node<T, T2> *temp2 = temp->child;
+					//now traverse tree down
 					while (temp2 != nullptr) {
 						arr.AddEnd(temp2); //need to change this to AddFront?
-						temp2 = temp2->sibling;
+						cout << temp2->key << " ";
+						temp2 = temp2->child;
+					}
+					//now traverse upwards and sideways
+					temp2 = arr[arr.Length() - 1];
+					//temp2 = temp2->sibling;
+					while (temp2->parent != nullptr) {
+						if (temp2->sibling != nullptr) {
+							temp2 = temp2->sibling;
+							cout << temp2->key << " ";
+							if (temp2->child != nullptr) {
+								temp2 = temp2->child;
+								cout << temp2->key << " ";
+							}
+						}
+						else {
+							temp2 = temp2->parent;
+							arr.DelEnd();
+						}
 					}
 				}
 			}
