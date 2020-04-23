@@ -1,5 +1,9 @@
+#ifndef CDA_CPP
+#define CDA_CPP
+
 #include <iostream>
 #include <random>
+
 using namespace std;
 
 template <typename T>
@@ -583,3 +587,5 @@ public:
 		}
 	}
 };
+
+#endif

@@ -41,11 +41,18 @@ public:
 	void setHead(Node<T, T2>* head) {
 		this->head = head;
 	}
+
+	Node<T, T2>* getHead() {
+		return head;
+	}
+
 	BHeap() {
 		head = nullptr;
 	}
 	BHeap(T *k, T2 *v, int s) {
-
+		for (int i = 0; i < s; i++) {
+			insert(k[i], v[i]);
+		}
 	}
 	~BHeap() {
 
@@ -62,15 +69,33 @@ public:
 		return smallest;
 	}
 	T2 peekValue() {
-
+		Node<T, T2>* temp = head;
+		Node<T, T2>* match = head;
+		T smallest = head->key;
+		while (temp != nullptr) {
+			if (temp->key < smallest) {
+				smallest = temp->key;
+				match = temp;
+			}
+			temp = temp->sibling;
+		}
+		return match->value;
 	}
 	T extractMin() {
 		Node<T, T2>* current = head;
-		Node<T, T2>* prev_min = nullptr;
-		Node<T, T2>* min_ptr = nullptr;
-		Node<T, T2>* prev_ptr = nullptr;
+		Node<T, T2>* prev_min = nullptr; //points to last found min before found min
+		Node<T, T2>* min_ptr = nullptr; //points to min root of trees
+		Node<T, T2>* prev_ptr = nullptr; //just holds place of last pointer of current ptr
 		T min = current->key;
 
+		if (size == 1) {
+			delete(head);
+			head = nullptr;
+			size--;
+			return min;
+		}
+
+		//find min
 		while (current != nullptr) {
 			if (current->key <= min) {
 				min = current->key;
@@ -82,13 +107,19 @@ public:
 		}
 
 
-		//now delete
+		//now delete node minPtr
 		if (prev_min != nullptr && min_ptr->sibling != nullptr) {
 			prev_min->sibling = min_ptr->sibling;
 		}
 		else if (prev_min != nullptr && min_ptr->sibling == nullptr) {
 			prev_min->sibling = nullptr;
 		}
+		//else if (prev_min == nullptr) {
+		//	prev_min = current;
+		//}
+		//else { //COULD BE WRONG
+		//	prev_min = min_ptr; //COULD BE WRONG
+		//} //COULD BE WRONG
 
 		//remove parent ptr from all children
 		Node<T, T2>* child_ptr = min_ptr->child;
@@ -97,7 +128,7 @@ public:
 			child_ptr = child_ptr->sibling;
 		}
 
-		//now reverse order
+		//now reverse the order
 		CDA<Node<T, T2>*> arr;
 		child_ptr = min_ptr->child;
 		while (child_ptr != nullptr) {
@@ -117,9 +148,9 @@ public:
 
 		current->sibling = nullptr;
 
-		BHeap<T, T2> heap;
-		heap.head = temp;
-		merge(heap);
+		BHeap<T, T2> *heap = new BHeap<T, T2>;
+		heap->setHead(temp);
+		merge(*heap);
 		size--;
 		return min_ptr->key;
 	}
@@ -128,27 +159,29 @@ public:
 		Node<T, T2> *temp = new Node<T, T2>;
 		initNode(temp, k, v, 0);
 
+		/*if (size == 0) {
+			head = temp;
+		}*/
+
 		if (size == 0) {
 			head = temp;
-			cout << "i should only print once." << endl;
 		}
-
-		//head = temp; //could be wrong
-		new_heap.head = temp; //could be wrong
-		//new_heap.setHead(temp);
-		merge(new_heap);
+		else {
+			new_heap.head = temp;
+			merge(new_heap);
+		}
 		size++;
 	}
 	void merge(BHeap<T, T2> &H2) {
-		Node<T, T2> *first = this->head;
-		Node<T, T2> *second = H2.head;
+		Node<T, T2> *first = getHead();
+		Node<T, T2>* second = H2.getHead();
 		Node<T, T2> *third = nullptr;
 		Node<T, T2> *temp = nullptr;
 
 		//only 1 heap (occurs on first insertion)
-		if (first == second) {
-			return;
-		}
+		//if (first == second) {
+		////	return;
+		//}
 
 		//if original first tree <= second original tree, point first to second & third to first
 		if (first->degree <= second->degree) {
