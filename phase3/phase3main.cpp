@@ -1,36 +1,35 @@
 #include <iostream>
 using namespace std;
-#include "Heap.cpp"
 #include "BHeap.cpp"
 
+void printErrors(string errors, int numOfErrors) {
+	if (numOfErrors < 5) {
+		cout << errors << " passed " << endl;
+	}
+	else if (numOfErrors < 100) {
+		cout << errors << " caused " << numOfErrors << " of errors ADD+1" << endl;
+		cout << errors << " caused " << numOfErrors << " of errors ADD+1" << endl;
+		cout << errors << " caused " << numOfErrors << " of errors ADD+1" << endl;
+	}
+	else if (numOfErrors < 1000) {
+		cout << errors << " caused " << numOfErrors << " of errors ADD+1" << endl;
+		cout << errors << " caused " << numOfErrors << " of errors ADD+1" << endl;
+	}
+	else if (numOfErrors < 10000) {
+		cout << errors << " caused " << numOfErrors << " of errors ADD+1" << endl;
+	}
+	else {
+		cout << errors << " caused " << numOfErrors << " of errors" << endl;
+	}
+}
 
 int main() {
-	string A[10] = { "A","B","C","D","E","F","H","I","J","K" };
-	int B[10] = { 10,9,8,7,6,5,4,3,2,1 };
+	string A[13] = { "AD","AB","AA","A","B","C","D","E","F","H","I","J","K" };
+	int B[13] = { 13,12,11,10,9,8,7,6,5,4,3,2,1 };
 
-	Heap<int, string> T1, T2(B, A, 10);
+	BHeap<string, int> Z(A, B, 13), Y;
 
-	T2.printKey();
-	//Should output  1 2 4 3 6 5 8 10 7 9
-
-	for (int i = 0; i < 10; i++) T1.insert(B[i], A[i]);
-
-	T1.printKey();
-	// Should output 1 2 5 4 3 9 6 10 7 8
-
-	cout << T2.peekValue() << endl;
-	//Should output K
-
-	cout << T1.extractMin() << endl;
-	//Should output 1
-
-	T1.printKey();
-	//Should output 2 3 5 4 8 9 6 10 7
-
-
-	BHeap<string, int> X(A, B, 10), Y;
-
-	X.printKey();
+	Z.printKey();
 	//Should output 
 	//B1
 	//J K
@@ -38,22 +37,23 @@ int main() {
 	//B3
 	//A E H I F C D B
 
-	cout << X.extractMin() << endl;
+	cout << Z.extractMin() << endl;
 	//Should output A
 
-	X.printKey();
-		//Should output
-		//B0
-		//B
-		//
-		//B3
-		//C E H I F J K D
+	Z.printKey();
+	//Should output
+	//B0
+	//B
+	//
+	//B3
+	//C E H I F J K D
 
-		Y.insert("M", 100);
-	Y.insert("O", 101);
-	Y.insert("G", 102);
-	Y.insert("N", 103);
-	Y.insert("L", 104);
+	Y.insert("P", 100);
+	Y.insert("h", 101);
+	Y.insert("a", 102);
+	Y.insert("s", 103);
+	Y.insert("e", 104);
+	Y.insert("3", 105);
 
 	Y.printKey();
 	//Should output
@@ -63,7 +63,7 @@ int main() {
 	//B2
 	//G M O N
 
-	Y.merge(X);
+	Y.merge(Z);
 	cout << Y.peekKey() << endl;
 	//Should output B
 
@@ -78,5 +78,44 @@ int main() {
 	//B3
 	//C E H I F J K D
 
+	BHeap<int, int> X;
+	for (int i = 0; i < 100000; i++) {
+		X.insert(i, 100000 - i);
+	}
+	int peakKey = 0;
+	int peakValue = 0;
+	int extractMin = 0;
+	for (int i = 0; i < 100000; i++) {
+		if (X.peekKey() != i) peakKey++;
+		if (X.peekValue() != 100000 - i) peakValue++;
+		if (X.extractMin() != i) extractMin++;
+		cout << "." << endl;
+	}
+	printErrors("peakKey", peakKey);
+	printErrors("peakValue", peakValue);
+	printErrors("extractMin", extractMin);
+
+	BHeap<int, int> C, D;
+	for (int i = 0; i < 100000; i++) {
+		C.insert(i, 100000 - i);
+		D.insert(100000 + i, 200000 - i);
+	}
+	C.merge(D);
+	peakKey = 0;
+	peakValue = 0;
+	extractMin = 0;
+	for (int i = 0; i < 199999; i++) {
+		if (C.peekKey() != i) peakKey++;
+		if (i < 100000 && C.peekValue() != 100000 - i) {
+			peakValue++;
+		}
+		if (i > 99999 && C.peekValue() != 300000 - i) {
+			peakValue++;
+		}
+		if (C.extractMin() != i) extractMin++;
+	}
+	printErrors("peakKey", peakKey);
+	printErrors("peakValue", peakValue);
+	printErrors("extractMin", extractMin);
 	return 0;
 }

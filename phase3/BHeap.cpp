@@ -73,17 +73,11 @@ private:
 		return i;
 	}
 
-
-
-public:
-	void setHead(Node<T, T2>* head) {
-		this->head = head;
-	}
-
 	Node<T, T2>* getHead() {
 		return head;
 	}
 
+public:
 	BHeap() {
 		head = nullptr;
 	}
@@ -140,36 +134,30 @@ public:
 				prev = prev->sibling;
 				temp = temp->sibling;
 			}
-			/*
-			 *  If prev, assign prev sibling to min sibling.
-			 *  Else if no prev min->sibling is new head
-			 */
+			//If prev, assign prev->sibling to min->sibling
 			if (minPrev) {
 				minPrev->sibling = min->sibling;
 			}
+			//else no prev min->sibling is new head
 			else {
 				head = min->sibling;
 			}
-			/*
-			 * Update all children nodes parent pointers to null
-			*/
+			//Update children node's parent pointers = nullptr
 			next = min->child;
 			temp = next;
 			while (temp) {
 				temp->parent = min->parent;
 				temp = temp->sibling;
 			}
-			/*
-			 * Detach and delete min
-			 */
+			
+			//detach & remove min
 			min->sibling = nullptr;
 			min->child = nullptr;
 			min->parent = nullptr;
 			minValue = min->key;
 			delete min;
-			/*
-			 * Union the two detached heaps
-			 */
+
+			//union two detached heaps and merge others if necessary
 			head = unionHeap(head, next);
 			temp = min = minPrev = next = nullptr;
 		}
@@ -197,11 +185,6 @@ public:
 		Node<T, T2>* second = H2.getHead();
 		Node<T, T2>* third = nullptr;
 		Node<T, T2>* temp = nullptr;
-
-		//only 1 heap (occurs on first insertion)
-		//if (first == second) {
-		////	return;
-		//}
 
 		//if original first tree <= second original tree, point first to second & third to first
 		if (first->degree <= second->degree) {
@@ -300,7 +283,7 @@ public:
 					* prev = nullptr,
 					* cur = nullptr;
 				//pick minimum heap root to be merged heap root
-				if (heapA->degree >= heapB->degree) {
+				if (heapA->degree > heapB->degree) {
 					heapM = heapB;
 					next = heapA;
 				}
