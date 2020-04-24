@@ -10,6 +10,30 @@ struct Node {
 	T key;
 	T2 value;
 	int degree;
+
+	void addChild(Node<T, T2>* childNode)
+	{
+		if (childNode)
+		{
+			childNode->sibling = nullptr;
+			if (child)
+			{
+				Node<T, T2>* temp = child;
+				while (temp->sibling)
+				{
+					temp = temp->sibling;
+				}
+				temp->sibling = childNode;
+			}
+			else
+			{
+				child = childNode;
+			}
+			//
+			++degree;
+			childNode->parent = this;
+		}
+	}
 };
 
 
@@ -33,6 +57,20 @@ private:
 		second->sibling = first->child;
 		first->child = second;
 		first->degree += 1;
+	}
+	
+	int order(Node<T, T2>* heap)
+	{
+		if (!heap)
+			return -1;
+		int i = 0;
+		Node<T, T2>* child = heap->child;
+		while (child)
+		{
+			++i;
+			child = child->sibling;
+		}
+		return i;
 	}
 
 
@@ -82,101 +120,83 @@ public:
 		return match->value;
 	}
 	T extractMin() {
-		Node<T, T2>* current = head;
-		Node<T, T2>* prev_min = nullptr; //points to last found min before found min
-		Node<T, T2>* min_ptr = nullptr; //points to min root of trees
-		Node<T, T2>* prev_ptr = nullptr; //just holds place of last pointer of current ptr
-		T min = current->key;
+		Node<T, T2>* prev = nullptr,
+			* min = nullptr,
+			* temp = nullptr,
+			* next = nullptr;
+		T minValue;
+		if (head) {
+			Node<T, T2>* minPrev = nullptr; //previous node of min node
+			min = head;
+			temp = head->sibling;
+			prev = head;
 
-		if (size == 1) {
-			delete(head);
-			head = nullptr;
-			size--;
-			return min;
-		}
-
-		//find min
-		while (current != nullptr) {
-			if (current->key <= min) {
-				min = current->key;
-				prev_min = prev_ptr;
-				min_ptr = current;
+			//Find min and minPrev of heaps
+			while (temp) {
+				if (temp->key < min->key) {
+					min = temp;
+					minPrev = prev;
+				}
+				prev = prev->sibling;
+				temp = temp->sibling;
 			}
-			prev_ptr = current;
-			current = current->sibling;
-		}
-
-
-		//now delete node minPtr
-		if (prev_min != nullptr && min_ptr->sibling != nullptr) {
-			prev_min->sibling = min_ptr->sibling;
-		}
-		else if (prev_min != nullptr && min_ptr->sibling == nullptr) {
-			prev_min->sibling = nullptr;
-		}
-		//else if (prev_min == nullptr) {
-		//	prev_min = current;
-		//}
-		//else { //COULD BE WRONG
-		//	prev_min = min_ptr; //COULD BE WRONG
-		//} //COULD BE WRONG
-
-		//remove parent ptr from all children
-		Node<T, T2>* child_ptr = min_ptr->child;
-		while (child_ptr != nullptr) {
-			child_ptr->parent = nullptr;
-			child_ptr = child_ptr->sibling;
-		}
-
-		//now reverse the order
-		CDA<Node<T, T2>*> arr;
-		child_ptr = min_ptr->child;
-		while (child_ptr != nullptr) {
-			arr.AddEnd(child_ptr);
-			child_ptr = child_ptr->sibling;
-		}
-
-		current = arr[arr.Length() - 1];
-		Node<T, T2>* temp = current;
-		arr.DelEnd();
-
-		while (arr.Length() != 0) {
-			current->sibling = arr[arr.Length() - 1];
-			arr.DelEnd();
-			current = current->sibling;
-		}
-
-		current->sibling = nullptr;
-
-		BHeap<T, T2> *heap = new BHeap<T, T2>;
-		heap->setHead(temp);
-		merge(*heap);
-		size--;
-		return min_ptr->key;
-	}
-	void insert(T k, T2 v) {
-		BHeap new_heap;
-		Node<T, T2> *temp = new Node<T, T2>;
-		initNode(temp, k, v, 0);
-
-		/*if (size == 0) {
-			head = temp;
-		}*/
-
-		if (size == 0) {
-			head = temp;
+			/*
+			 *  If prev, assign prev sibling to min sibling.
+			 *  Else if no prev min->sibling is new head
+			 */
+			if (minPrev) {
+				minPrev->sibling = min->sibling;
+			}
+			else {
+				head = min->sibling;
+			}
+			/*
+			 * Update all children nodes parent pointers to null
+			*/
+			next = min->child;
+			temp = next;
+			while (temp) {
+				temp->parent = min->parent;
+				temp = temp->sibling;
+			}
+			/*
+			 * Detach and delete min
+			 */
+			min->sibling = nullptr;
+			min->child = nullptr;
+			min->parent = nullptr;
+			minValue = min->key;
+			delete min;
+			/*
+			 * Union the two detached heaps
+			 */
+			head = unionHeap(head, next);
+			temp = min = minPrev = next = nullptr;
 		}
 		else {
-			new_heap.head = temp;
-			merge(new_heap);
+			cout << "empty heap" << endl;
 		}
+
+		return minValue;
+	}
+	void insert(T k, T2 v) {
+		Node<T, T2>* new_node = new Node<T, T2>;
+		Node<T, T2>* old;
+		if (head) {
+			old = head->parent;
+		}
+		else {
+			head = nullptr;
+		}
+		initNode(new_node, k, v, 0);
+		head = unionHeap(new_node, head);
 		size++;
 	}
 	void merge(BHeap<T, T2> &H2) {
-		Node<T, T2> *first = getHead();
+		Node<T, T2>* first = getHead();
 		Node<T, T2>* second = H2.getHead();
-		Node<T, T2> *third = nullptr;
-		Node<T, T2> *temp = nullptr;
+		Node<T, T2>* third = nullptr;
+		Node<T, T2>* temp = nullptr;
 
 		//only 1 heap (occurs on first insertion)
 		//if (first == second) {
@@ -209,7 +229,7 @@ public:
 		}
 
 		//copy all trees of first heap
-		if (first != nullptr) { 
+		if (first != nullptr) {
 			while (first != nullptr) {
 				third->sibling = first;
 				first = first->sibling;
@@ -228,8 +248,8 @@ public:
 
 		//search merged list and merge all trees with same degree
 		third = temp;
-		Node<T, T2> *prev = nullptr;
-		Node<T, T2> *next = third->sibling;
+		Node<T, T2>* prev = nullptr;
+		Node<T, T2>* next = third->sibling;
 
 		while (next != nullptr) {
 			//if two||three adjacent trees have same degree, move to next tree
@@ -261,50 +281,250 @@ public:
 
 		head = temp;
 	}
-	void printKey() {
-		Node<T, T2> *current = head;
-		
-		while (current != nullptr) {
-			cout << "B" << current->degree << endl; //print tree degree
-			CDA<Node<T, T2>*> arr;
-			arr.AddEnd(current); //can I change this to .AddEnd?
 
-			while (arr.Length() != 0) {
-				Node<T, T2>* temp = arr[0];
-				arr.DelEnd(); //TODO: REMOVE ITEM HERE, DelFront or DelBack>?
-				cout << temp->key << " ";
+	Node<T,T2>* mergeHeap(Node<T, T2>* heapA, Node<T, T2>* heapB) {
+		//heapA = head, heapB = next
+		//modify to insert
+		Node<T, T2>* heapM = nullptr;//merged heap
 
-				//now traverse tree down
-				if (temp->child != nullptr) {
-					Node<T, T2> *temp2 = temp->child;
-					//now traverse tree down
-					while (temp2 != nullptr) {
-						arr.AddEnd(temp2); //need to change this to AddFront?
-						cout << temp2->key << " ";
-						temp2 = temp2->child;
-					}
-					//now traverse upwards and sideways
-					temp2 = arr[arr.Length() - 1];
-					//temp2 = temp2->sibling;
-					while (temp2->parent != nullptr) {
-						if (temp2->sibling != nullptr) {
-							temp2 = temp2->sibling;
-							cout << temp2->key << " ";
-							if (temp2->child != nullptr) {
-								temp2 = temp2->child;
-								cout << temp2->key << " ";
-							}
+		if (heapA || heapB) {
+			if (heapA && !heapB) {
+				heapM = heapA;
+			}
+			else if (!heapA && heapB) {
+				heapM = heapB;
+			}
+			else {
+				Node<T, T2>* temp = nullptr,
+					* next = nullptr,
+					* prev = nullptr,
+					* cur = nullptr;
+				//pick minimum heap root to be merged heap root
+				if (heapA->degree >= heapB->degree) {
+					heapM = heapB;
+					next = heapA;
+				}
+				else {
+					heapM = heapA;
+					next = heapB;
+				}
+				cur = heapM;
+				//Merges heap by reassigning sibling pointers
+
+				//PROBLEM (doesnt disonnect E tree from C)
+				while (cur && next && cur != next) {
+					if (cur->degree <= next->degree) {
+						if (cur->sibling) {
+							temp = cur->sibling;
+							cur->sibling = next;
+							prev = cur;
+							cur = next;
+							next = temp;
 						}
 						else {
-							temp2 = temp2->parent;
-							arr.DelEnd();
+							cur->sibling = next;
+							cur = next; // break loop
 						}
+					}
+					else {
+						if (prev)
+							prev->sibling = next;
+						else
+							heapM = next;
+						temp = next->sibling;
+						next->sibling = cur;
+						prev = next;
+						next = temp;
+
 					}
 				}
 			}
 
-			current = current->sibling;
-			cout << endl << endl;
+			//	//copy trees
+			//	if (cur != nullptr) {
+			//		// copy all the remaining trees of heap1
+			//		while (cur != nullptr) {
+			//			curr3->sibling = curr1;
+			//			cur = cur->sibling;
+			//			curr3 = curr3->sibling;
+			//		}
+			//	}
+
+			//	if (next != nullptr) {
+			//		// copy all the remaining trees of heap2
+			//		while (curr2 != nullptr) {
+			//			curr3->sibling = curr2;
+			//			curr2 = curr2->sibling;
+			//			curr3 = curr3->sibling;
+			//		}
+			//	}
+
+			//	// scan the merged list and repeatedly merge binomial trees with same degree
+			//	cur = temp;
+			//	prev = nullptr;
+			//	next = cur->sibling;
+
+			//	while (next != nullptr) {
+			//		// if two adjacent tree roots have different degree or 3 consecutive roots have same degree
+			//		// move to the next tree
+			//		if ((cur->degree != next->degree) || (next->sibling != nullptr && cur->degree == next->sibling->degree)) {
+			//			prev = cur;
+			//			cur = next;
+			//		}
+			//		else {
+			//			// otherwise repeatdly merge binomial trees with same degree
+			//			if (cur->key <= next->key) {
+			//				cur->sibling = next->sibling;
+			//				mergeTrees(cur, next);
+			//			}
+			//			else {
+			//				if (prev == nullptr) {
+			//					temp = next;
+			//				}
+			//				else {
+			//					prev->sibling = next;
+			//				}
+
+			//				mergeTrees(next, cur);
+			//				cur = next;
+			//			}
+			//		}
+
+			//		next = cur->sibling;
+			//	}
+			//	heapM = temp;
+			//}
+			//heapM = temp;
 		}
+
+		return heapM;
+	}
+
+	void printKey() {
+		Node<T, T2>* current = head;
+		Node<T, T2>* temp = head;
+		CDA<Node<T, T2>*> arr;
+		
+		while (current != nullptr) {
+			cout << "B" << current->degree << endl << current->key << " ";
+			temp = current;
+
+			while (temp != nullptr && temp->degree != 0) {
+				//go down as much as possible
+				temp = temp->child;
+				//if reached bottom addEnd
+				if (temp->child == nullptr) {
+					arr.AddEnd(temp);
+					//if (no sibling) go up & addEnd & go right
+					if (temp->sibling == nullptr) {
+						//added for 2 node tree
+						if (temp->parent == current) {
+							break;
+						}
+						temp = temp->parent;
+						arr.AddEnd(temp);
+						//we hit the bottom right end, now finish and traverse up
+						if (temp->sibling == nullptr) {
+							while (temp->parent != current) {
+								temp = temp->parent;
+								arr.AddEnd(temp);
+							}
+							break;
+						}
+						else {
+							temp = temp->sibling;
+						}
+					}
+					else {
+						temp = temp->sibling;
+					}
+				}
+			}
+			for (int i = arr.Length() - 1; i >= 0; i--) {
+				cout << arr[i]->key << " ";
+				arr.DelEnd();
+			}
+			cout << endl << endl;
+			current = current->sibling;
+		}	
+	}
+		
+
+	Node<T, T2>* unionHeap(Node<T, T2>* heapA, Node<T, T2>* heapB) {
+		/*
+	 * Merges heapA (head) and heapB (next) assuming both are sorted by heap order
+	 * concatenates heaps of same order so that at most one tree of each order
+	*/
+
+	/*
+	 * get merged heap of heapA and heapB
+	 */
+		Node<T, T2 >* heapU = mergeHeap(heapA, heapB);
+		bool done_merging = false;
+		if (heapU) {
+			while (!done_merging) {
+				Node<T, T2>
+					* cur = heapU,  // current node to append before or after
+					* prev = nullptr, // node with sibling equal to current
+					* next = nullptr; // the next potential
+				int orderA, orderB;
+
+				//now we have cur (root list) of all the promoted nodes, now merge them all!
+				while (cur && cur->sibling) {
+					next = cur->sibling;
+					orderA = cur->degree;
+					orderB = next->degree;
+					//if matching degrees, merge
+					if (orderA == orderB && orderA != order(next->sibling)) {
+						//Next becomes Current's Child
+						if (cur->key < next->key) {
+							cur->sibling = next->sibling;
+							cur->addChild(next);
+							//tempNext->parent = cur;
+							prev = cur;
+							cur = cur->sibling;
+						}
+						//Current becomes Next's Child
+						else {
+							if (prev)
+								prev->sibling = next;
+							else
+								heapU = next;
+							next->addChild(cur);
+							prev = next;
+							cur = next->sibling;
+						}
+					}
+					else {
+						// got to Next's Child
+						if (!prev)
+							heapU = cur;
+						prev = cur;
+						cur = next;
+					}
+				}
+
+				//now check to see if done merging
+				cur = heapU;
+				int next_degree = 0;
+				if (cur->sibling) {
+					while (cur->sibling) {
+						next_degree = cur->sibling->degree;
+						if (cur->degree == next_degree) {
+							done_merging = false;
+							break;
+						}
+						else {
+							done_merging = true;
+							cur = cur->sibling;
+						}
+					}
+				}
+				else {
+					done_merging = true;
+				}
+			}
+		}
+		return heapU;
 	}
 };
